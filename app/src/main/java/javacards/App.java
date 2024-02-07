@@ -11,6 +11,7 @@ public class App extends Application {
     public final static Deck deck = new Deck(true);
     public final static Deck stack = new Deck(false);
     private final static Player player = new Player("player", new int[]{140,140}, false);
+    public static final int amountOfPlayers = 3;
 
     @Override
     public void start(Stage stage) {
