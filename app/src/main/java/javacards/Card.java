@@ -33,7 +33,12 @@ public class Card {
     public final Group card;
     /** Card's orientation (true if face up) */
     public boolean visible = false;
-    /** Whether the card is in the deck. */
+    /**
+     * State of the card.
+     * true - in player's hand
+     * false - topmost in deck
+     * null - in stack/deck
+     */
     public Boolean state = null;
 
     /**
@@ -65,20 +70,22 @@ public class Card {
             card.setOnMouseClicked(null);
         } else if (state) {
             card.setOnMouseClicked(eh -> {
-                System.out.println(App.stack.cards.size());
+                state = null;
+                setHandler();
+
                 Player player = App.player;
                 player.playCard(this);
-                setHandler();
             });
-            state = null;
         } else {
             card.setOnMouseClicked(eh -> {
+                state = true;
+                setHandler();
+
                 Player player = App.player;
                 deck.dealCard();
                 player.drawCard(this);
                 Animation.flip(this);
                 card.toFront();
-                setHandler();
                 if (deck.cards.isEmpty()) {
                     Card temp = App.stack.dealCard();
                     App.stack.shuffle();
@@ -96,7 +103,6 @@ public class Card {
                 deck.cards.get(0).state = false;
                 deck.cards.get(0).setHandler();
             });
-            state = true;
         }
     }
 
