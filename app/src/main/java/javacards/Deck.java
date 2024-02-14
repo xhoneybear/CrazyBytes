@@ -26,12 +26,12 @@ public class Deck {
     }
 
     /** Initializes the deck with all 52 cards. */
-    public void initializeDeck() {
+    public final void initializeDeck() {
         String[] suits = {"hearts", "diamonds", "clubs", "spades"};
 
         for(String suit: suits){
             for(int rank = 1; rank <= 13; rank++){
-                cards.add(new Card(suit, Integer.toString(rank)));
+                cards.add(new Card(suit, Integer.toString(rank), this));
             }
         }
         shuffle();
@@ -42,7 +42,7 @@ public class Deck {
      * @param card The card to add.
      */
     public void add(Card card){
-        cards.add(card);
+        cards.add(0, card);
     }
 
     /** Shuffles the deck */

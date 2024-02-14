@@ -67,12 +67,12 @@ public class Player implements CrazyEightsPlayer {
      *
      * @param card Index of the card to remove.
      */
-
     @Override
-    public void playCard(int card) {
-        Animation.move(hand.get(card), new int[]{0, 0});
-        App.stack.add(hand.remove(card));
-        System.out.println("Removed card: " + App.stack.cards.get(App.stack.cards.size() - 1));
+    public void playCard(Card card) {
+        card.card.toFront();
+        Animation.move(card, new int[]{0, 0});
+        App.stack.add(hand.remove(hand.indexOf(card)));
+        System.out.println("Removed card: " + card.toString());
     }
 
     /**

@@ -1,7 +1,7 @@
 package javacards;
 
 public interface CrazyEightsPlayer {
-    void playCard(int card);
+    void playCard(Card card);
     void drawCard(Card card);
     void passTurn(int turn);
     void collectPayment();

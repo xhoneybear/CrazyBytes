@@ -17,7 +17,7 @@ public class Animation {
      * Asynchronous sleep for animation purposes.
      * @param delay The amount of time to sleep (in ms).
      */
-    private static CompletableFuture<Void> nonBlockingSleep(long delay) {
+    public static CompletableFuture<Void> nonBlockingSleep(long delay) {
         CompletableFuture<Void> completableFuture = new CompletableFuture<>();
 
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
@@ -33,7 +33,7 @@ public class Animation {
      * @param pos The position to move to.
      */
     public static void move(Card card, int[] pos) {
-        TranslateTransition move = new TranslateTransition(Duration.seconds(0.5), card.card);
+        TranslateTransition move = new TranslateTransition(Duration.seconds(0.4), card.card);
         move.setToX(pos[0]);
         move.setToY(pos[1]);
         move.play();
@@ -44,11 +44,11 @@ public class Animation {
      * @param card The card to flip.
      */
     public static void flip(Card card) {
-        RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), card.card);
+        RotateTransition rotate = new RotateTransition(Duration.seconds(0.4), card.card);
         rotate.setAxis(Rotate.Y_AXIS);
         rotate.setByAngle(180);
         rotate.play();
-        nonBlockingSleep(250).thenRun(() -> {
+        nonBlockingSleep(200).thenRun(() -> {
             card.visible = !card.visible;
             if (card.visible) {
                 card.img = Config.dir + card.getSuit().charAt(0) + card.getRank() + ".png";
