@@ -1,29 +1,36 @@
 package javacards;
 
+import javafx.scene.image.Image;
 public class Config {
-    public static final String dir = Card.class.getResource("/cards/").toExternalForm();
-    public static final String hearts = "#FF6E66";
-    public static final String diamonds = "#BB66FF";
-    public static final String spades = "#AAFF66";
-    public static final String clubs = "#66F7FF";
+    public static final String DIR = Card.class.getResource("/cards/").toExternalForm();
+    public static final Image BACK = new Image(DIR + "back.png", 135, 210, true, true);
+
+    private static final String HEARTS = "#FF6E66";
+    private static final String DIAMONDS = "#BB66FF";
+    private static final String SPADES = "#AAFF66";
+    private static final String CLUBS = "#66F7FF";
 
 
 
     public static final String color(String suit, boolean extended) {
         if (extended) {
             return switch (suit) {
-                case "hearts" -> hearts;
-                case "diamonds" -> diamonds;
-                case "spades" -> spades;
-                case "clubs" -> clubs;
+                case "hearts" -> HEARTS;
+                case "diamonds" -> DIAMONDS;
+                case "spades" -> SPADES;
+                case "clubs" -> CLUBS;
                 default -> "#FFFFFF";
             };
         } else {
             return switch (suit) {
-                case "hearts", "diamonds" -> hearts;
-                case "spades", "clubs" -> spades;
+                case "hearts", "diamonds" -> HEARTS;
+                case "spades", "clubs" -> SPADES;
                 default -> "#FFFFFF";
             };
         }
+    }
+
+    public static final double tilt() {
+        return Math.random() * 10 - 5;
     }
 }

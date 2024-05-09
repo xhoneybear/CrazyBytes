@@ -1,9 +1,5 @@
 package javacards;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 /**
  * Represents a player in the game.
  * A player has a hand of cards.
@@ -13,7 +9,7 @@ public class Player implements CrazyEightsPlayer {
     /**
      * Player's name.
      */
-    private final String name;
+    public final String name;
     /**
      * Player's position on the table.
      */
@@ -23,9 +19,13 @@ public class Player implements CrazyEightsPlayer {
      */
     private final Boolean AI;
     /**
+     * Player's points.
+     */
+    private int points = 0;
+    /**
      * Player's hand.
      */
-    private static List<Card> hand;
+    private final CardPile hand = new CardPile(false);
 
     /**
      * Constructor for the Player class.
@@ -38,7 +38,6 @@ public class Player implements CrazyEightsPlayer {
         this.name = name;
         this.position = pos;
         this.AI = AI;
-        this.hand = new ArrayList<>();
     }
 
     /**
@@ -46,8 +45,17 @@ public class Player implements CrazyEightsPlayer {
      *
      * @return The player's hand.
      */
-    public static List<Card> getHand() {
+    public CardPile getHand() {
         return hand;
+    }
+
+    /**
+     * Gets the player's points.
+     *
+     * @return The player's points.
+     */
+    public int getPoints() {
+        return points;
     }
 
     /**
@@ -57,9 +65,25 @@ public class Player implements CrazyEightsPlayer {
      */
     @Override
     public void drawCard(Card card) {
-        Animation.move(card, this.position);
         hand.add(card);
+        card.setHandler(true);
         System.out.println("Added card: " + card);
+        // card.card.toFront();    // why is this blocking?
+        System.out.println("this is fine");
+        adjustHand();
+    }
+
+    private void adjustHand() {
+        int mod;
+        for (int i = 0; i < hand.cards.size(); i++) {
+            mod = 2 * i - (hand.cards.size() - 1);
+            double[] pos = new double[]{
+                this.position[0] + 50 * mod * (this.position[0] == 0 ? 1 : 0) + Math.pow(Math.abs(mod), 2.4) * (this.position[0] == 0 ? 0 : Math.signum(this.position[0])),
+                this.position[1] + 50 * mod * (this.position[1] == 0 ? 1 : 0) + Math.pow(Math.abs(mod), 2.4) * (this.position[1] == 0 ? 0 : Math.signum(this.position[1])),
+                this.position[2] + 5 * mod * Math.signum(this.position[1] - this.position[0])
+            };
+            Animation.move(hand.cards.get(hand.cards.size() - i - 1), pos);
+        }
     }
 
     /**
@@ -69,20 +93,31 @@ public class Player implements CrazyEightsPlayer {
      */
     @Override
     public void playCard(Card card) {
-        card.card.toFront();
-        Animation.move(card, new int[]{0, 0});
-        App.stack.add(hand.remove(hand.indexOf(card)));
+        App.stack.add(hand.cards.remove(hand.cards.indexOf(card)));
         System.out.println("Removed card: " + card.toString());
+        card.card.toFront();
+        Animation.move(card, new double[]{0, 0, Config.tilt()});
+        adjustHand();
     }
 
     /**
      * Displays the player's hand.
+     * @param show If false, hides the player's cards instead.
      */
-    public void displayHand() {
-        for (Card card : hand) {
-            Animation.flip(card);
-            System.out.println(card);
+    public void displayHand(boolean show) {
+        for (Card card : hand.cards) {
+            if (card.scale.getByX() == 2 * (show ? 1 : -1)) {
+                Animation.flip(card);
+                System.out.println(card);
+            }
         }
+    }
+    public void displayHand() {
+        displayHand(true);
+    }
+
+    public boolean hasCards() {
+        return !this.hand.cards.isEmpty();
     }
 
     @Override

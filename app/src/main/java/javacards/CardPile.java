@@ -5,20 +5,20 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- Represents a deck of cards.
- A deck has an array of cards, and methods to shuffle the deck and deal a card.
+ Represents a pile of cards.
+ A pile holds an array of cards and methods to shuffle itself and deal a card.
  */
 
-/** The deck of cards. */
-public class Deck {
+/** A pile for cards. */
+public class CardPile {
     /** List of cards */
-    public List<Card> cards;
+    public final List<Card> cards;
 
     /**
-     * Constructor for the Deck class.
+     * Constructor for the CardPile class.
      * @param init If true, initializes the deck with all 52 cards.
      */
-    public Deck(boolean init) {
+    public CardPile(boolean init) {
         cards = new ArrayList<>();
         if (init) {
             initializeDeck();
@@ -31,10 +31,15 @@ public class Deck {
 
         for(String suit: suits){
             for(int rank = 1; rank <= 13; rank++){
-                cards.add(new Card(suit, Integer.toString(rank), this));
+                cards.add(new Card(suit, rank, this));
             }
         }
         shuffle();
+    }
+
+    public final void activate() {
+        Card card = cards.get(0);
+        card.setHandler(false);
     }
 
     /**
@@ -56,8 +61,12 @@ public class Deck {
      * @return The card that was dealt, or null if the deck is empty.
      */
     public Card dealCard(){
-        /** If the deck is empty, return null. */
+        /** 
+         * If the deck is empty, return null. 
+         * (I don't think it should ever happen though)
+         */
         if(cards.isEmpty()){
+            System.err.println("Deck is empty!");
             return null;
         }
         /** Otherwise, remove the first card from the deck and return it. */

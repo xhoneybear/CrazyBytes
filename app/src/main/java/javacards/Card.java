@@ -1,10 +1,12 @@
 package javacards;
 
+import javafx.animation.ScaleTransition;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 /**
  * The Card class represents a playing card.
@@ -22,24 +24,19 @@ public class Card {
     /** The suit of the card (hearts, diamonds, clubs, spades). */
     private final String suit;
     /** The rank of the card (1 - 13). */
-    private final String rank;
+    private final int rank;
     /** The deck that the card belongs to. */
-    private final Deck deck;
-    /** Card face image file name. */
-    public String img = Config.dir + "back.png";
+    private final CardPile deck;
+    /** Card face image. */
+    public final Image img;
     /** ImageView representing the card. */
     public final ImageView view;
     /** Card's graphical representation. */
     public final Group card;
     /** Card's orientation (true if face up) */
     public boolean visible = false;
-    /**
-     * State of the card.
-     * true - in player's hand
-     * false - topmost in deck
-     * null - in stack/deck
-     */
-    public Boolean state = null;
+    /** Card's transition for use with flip animation. */
+    public final ScaleTransition scale;
 
     /**
      * Constructor for the Card class.
@@ -48,60 +45,63 @@ public class Card {
      * @param deck The deck that the card belongs to.
      */
 
-    public Card(String suit, String rank, Deck deck) {
+    public Card(String suit, int rank, CardPile deck) {
         this.suit = suit;
         this.rank = rank;
         this.deck = deck;
         Rectangle rec = new Rectangle(135, 210);
         rec.setFill(Paint.valueOf(Config.color(this.suit, true)));
-        Image e = new Image(this.img, 135, 210, true, true);
-        this.view = new ImageView(e);
+        String e = Config.DIR + suit.charAt(0) + rank + ".png";
+        this.img = new Image(e, 135, 210, true, true);
+        this.view = new ImageView(Config.BACK);
         this.view.setScaleX(-1);
         this.card = new Group(rec, this.view);
-        this.card.setTranslateX(-210);
-        setHandler();
+        this.card.setTranslateX(Math.random() * 20 - 10);
+        this.card.setTranslateY(Math.random() * 20 - 10);
+        this.card.setRotate(Config.tilt());
+        this.scale = new ScaleTransition(Duration.seconds(0.4), this.card);
+        this.scale.setByX(2);
     }
 
     /**
      * Sets the handler for the card.
+     * @param state The new handler state.
      */
-    public final void setHandler() {
-        if (state == null) {
+    public final void setHandler(Boolean state) {
+        if (state == null) {    // disable the card
             card.setOnMouseClicked(null);
-        } else if (state) {
+        } else if (state) {     // make playable by player
             card.setOnMouseClicked(eh -> {
-                state = null;
-                setHandler();
-
-                Player player = App.player;
-                player.playCard(this);
+                boolean isValid = Ruleset.checkValid(App.stack.cards.get(0), this);
+                if (isValid) {
+                    App.players.current().playCard(this);
+                    App.players.handControl();
+                    setHandler(null);
+                }
             });
-        } else {
+        } else {                // make drawable from deck
             card.setOnMouseClicked(eh -> {
-                state = true;
-                setHandler();
+                setHandler(true);
 
-                Player player = App.player;
                 deck.dealCard();
-                player.drawCard(this);
-                Animation.flip(this);
-                card.toFront();
+                App.players.current().drawCard(this);
+                // Animation.flip(this);
+                // card.toFront();
                 if (deck.cards.isEmpty()) {
-                    Card temp = App.stack.dealCard();
+                    Card top = App.stack.dealCard();
                     App.stack.shuffle();
                     while (!App.stack.cards.isEmpty()) {
-                        Card card = App.stack.dealCard();
-                        card.state = false;
-                        card.setHandler();
-                        deck.add(card);
-                        Animation.move(card, new int[]{-210, 0});
-                        Animation.flip(card);
-                        card.card.toFront();
+                        Card temp = App.stack.dealCard();
+                        deck.add(temp);
+                        Animation.move(temp, new double[]{-210, 0});
+                        Animation.flip(temp);
+                        temp.card.toFront();
                     }
-                    App.stack.add(temp);
+                    deck.activate();
+                    App.stack.add(top);
                 }
-                deck.cards.get(0).state = false;
-                deck.cards.get(0).setHandler();
+                deck.cards.get(0).setHandler(false);
+                App.players.handControl();
             });
         }
     }
@@ -118,7 +118,7 @@ public class Card {
      * Gets the rank of the card.
      * @return The rank of the card.
      */
-    public String getRank() {
+    public int getRank() {
         return rank;
     }
 
