@@ -11,9 +11,9 @@ public class App extends Application {
     public final static CardPile stack = new CardPile(false);
     public final static Players players = new Players(new Player[] {
         new Player("player1", new int[]{0,250,0}, false),
-        new Player("player2", new int[]{-500,0,90}, false),
-        new Player("player3", new int[]{0,-250,180}, false),
-        new Player("player4", new int[]{500,0,-90}, false)
+        new Player("player2", new int[]{-500,0,90}, true),
+        new Player("player3", new int[]{0,-250,180}, true),
+        new Player("player4", new int[]{500,0,-90}, true)
     });
 
     private static void deal(int pass) {
@@ -22,7 +22,7 @@ public class App extends Application {
             return;
         }
         players.next().drawCard(deck.dealCard());
-        Animation.nonBlockingSleep(250).thenRun(() -> deal(pass + 1));
+        Animation.nonBlockingSleep(250, () -> deal(pass + 1));
     }
 
     private static void startGame() {

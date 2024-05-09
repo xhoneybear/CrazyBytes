@@ -68,8 +68,7 @@ public class Player implements CrazyEightsPlayer {
         hand.add(card);
         card.setHandler(true);
         System.out.println("Added card: " + card);
-        // card.card.toFront();    // why is this blocking?
-        System.out.println("this is fine");
+        card.card.toFront();
         adjustHand();
     }
 
@@ -106,7 +105,7 @@ public class Player implements CrazyEightsPlayer {
      */
     public void displayHand(boolean show) {
         for (Card card : hand.cards) {
-            if (card.scale.getByX() == 2 * (show ? 1 : -1)) {
+            if (card.scale.getByX() == (show ? 2 : -2)) {
                 Animation.flip(card);
                 System.out.println(card);
             }
@@ -118,6 +117,31 @@ public class Player implements CrazyEightsPlayer {
 
     public boolean hasCards() {
         return !this.hand.cards.isEmpty();
+    }
+
+    public void takeControl() {
+        if (this.AI) {
+            Animation.nonBlockingSleep((int)(Math.random() * 1000), () -> {
+                boolean found = false;
+                for (Card card : this.hand.cards) {
+                    if (found = Ruleset.checkValid(App.stack.cards.get(0), card)) {
+                        this.playCard(card);
+                        card.card.setOnMouseClicked(null);
+                        Animation.flip(card);
+                        break;
+                    }
+                }
+                if (!found) {
+                    Card drawn = App.deck.dealCard();
+                    this.drawCard(drawn);
+                    drawn.setHandler(true);
+                    App.deck.cards.get(0).setHandler(false);
+                }
+                App.players.handControl();
+            });
+        } else {
+            this.displayHand();
+        }
     }
 
     @Override

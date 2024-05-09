@@ -1,12 +1,8 @@
 package javacards;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
+import javafx.concurrent.Task;
 import javafx.util.Duration;
 
 public class Animation {
@@ -14,16 +10,19 @@ public class Animation {
     /**
      * Asynchronous sleep for animation purposes.
      * @param delay The amount of time to sleep (in ms).
-     * @return null completable future.
+     * @param continuation The continuation to run after the sleep.
      */
-    public static CompletableFuture<Void> nonBlockingSleep(long delay) {
-        CompletableFuture<Void> completableFuture = new CompletableFuture<>();
-
-        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.schedule(() -> completableFuture.complete(null), delay, TimeUnit.MILLISECONDS);
-        executorService.shutdown();
-
-        return completableFuture;
+    public static void nonBlockingSleep(long delay, Runnable continuation) {
+      Task<Void> sleeper = new Task<Void>() {
+          @Override
+          protected Void call() throws Exception {
+              try { Thread.sleep(delay); }
+              catch (InterruptedException e) { }
+              return null;
+          }
+      };
+      sleeper.setOnSucceeded(event -> continuation.run());
+      new Thread(sleeper).start();
     }
 
     /**
@@ -50,7 +49,7 @@ public class Animation {
     public static void flip(Card card) {
         card.scale.setByX(card.scale.getByX() == 2 ? -2 : 2);
         card.scale.play();
-        nonBlockingSleep(200).thenRun(() -> {
+        nonBlockingSleep(200, () -> {
             card.visible = !card.visible;
             if (card.visible) {
                 card.view.setImage(card.img);

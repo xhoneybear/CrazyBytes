@@ -63,6 +63,37 @@ public class Card {
         this.scale.setByX(2);
     }
 
+    public void setPlayable() {
+        boolean isValid = Ruleset.checkValid(App.stack.cards.get(0), this);
+        if (isValid) {
+            App.players.current().playCard(this);
+            App.players.handControl();
+            setHandler(null);
+        }
+    }
+
+    public void setDrawable() {
+        setHandler(true);
+
+        deck.dealCard();
+        App.players.current().drawCard(this);
+        if (deck.cards.isEmpty()) {
+            Card top = App.stack.dealCard();
+            App.stack.shuffle();
+            while (!App.stack.cards.isEmpty()) {
+                Card temp = App.stack.dealCard();
+                deck.add(temp);
+                Animation.move(temp, new double[]{-210, 0});
+                Animation.flip(temp);
+                temp.card.toFront();
+            }
+            deck.activate();
+            App.stack.add(top);
+        }
+        deck.cards.get(0).setHandler(false);
+        App.players.handControl();
+    }
+
     /**
      * Sets the handler for the card.
      * @param state The new handler state.
@@ -71,38 +102,9 @@ public class Card {
         if (state == null) {    // disable the card
             card.setOnMouseClicked(null);
         } else if (state) {     // make playable by player
-            card.setOnMouseClicked(eh -> {
-                boolean isValid = Ruleset.checkValid(App.stack.cards.get(0), this);
-                if (isValid) {
-                    App.players.current().playCard(this);
-                    App.players.handControl();
-                    setHandler(null);
-                }
-            });
+            card.setOnMouseClicked(eh -> setPlayable());
         } else {                // make drawable from deck
-            card.setOnMouseClicked(eh -> {
-                setHandler(true);
-
-                deck.dealCard();
-                App.players.current().drawCard(this);
-                // Animation.flip(this);
-                // card.toFront();
-                if (deck.cards.isEmpty()) {
-                    Card top = App.stack.dealCard();
-                    App.stack.shuffle();
-                    while (!App.stack.cards.isEmpty()) {
-                        Card temp = App.stack.dealCard();
-                        deck.add(temp);
-                        Animation.move(temp, new double[]{-210, 0});
-                        Animation.flip(temp);
-                        temp.card.toFront();
-                    }
-                    deck.activate();
-                    App.stack.add(top);
-                }
-                deck.cards.get(0).setHandler(false);
-                App.players.handControl();
-            });
+            card.setOnMouseClicked(eh -> setDrawable());
         }
     }
 

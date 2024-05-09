@@ -36,8 +36,10 @@ public class Players {
             System.out.println(" wins!");
         } else {
             this.current().displayHand(false);
-            Animation.nonBlockingSleep(500).thenRun(() -> this.next().displayHand());
-            System.out.println(" hands control over to " + this.current().name);
+            Animation.nonBlockingSleep(500, () -> {
+                this.next().takeControl();
+                System.out.println(" hands control over to " + this.current().name);
+            });
         }
     }
 }
