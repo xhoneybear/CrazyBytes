@@ -45,8 +45,8 @@ public class Player implements CrazyEightsPlayer {
         this.position = new double[]{x, y, 360/count * pos};
         this.name = new Text(name);
         this.name.setFill(Color.WHITE);
-        this.name.setTranslateX(this.position[0] + Math.signum(this.position[0]) * 150);
-        this.name.setTranslateY(this.position[1] + Math.signum(this.position[1]) * 150);
+        this.name.setTranslateX(this.position[0] + this.position[0]/600 * 150);
+        this.name.setTranslateY(this.position[1] + this.position[1]/300 * 150);
         this.name.setRotate((this.position[2] + 90) % 360 <= 180 ? this.position[2] : this.position[2] - 180);
         this.AI = AI;
     }
