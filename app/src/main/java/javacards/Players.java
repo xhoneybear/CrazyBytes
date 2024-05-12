@@ -7,38 +7,45 @@
 
 package javacards;
 
+import javafx.util.Pair;
+
 /**
  * This class is a helper for management of players in a game.
  */
 
 public class Players {
-    private final Player[] players;
+    public final Player[] players;
     public final int length;
-    private int i;
+    private int current;
 
-    public Players(Player[] players) {
-        this.players = players;
+    public Players(Pair<String, Boolean> ... players) {
         this.length = players.length;
-        this.i = this.length - 1;
+        this.players = new Player[players.length];
+        for (int i = 0; i < players.length; i++) {
+            this.players[i] = new Player(players[i].getKey(), i, length, players[i].getValue());
+        }
+        this.current = this.length - 1;
     }
 
     public Player current() {
-        return players[i];
+        return players[current];
     }
 
     public Player next() {
-        return players[i = ++i % players.length];
+        return players[current = ++current % players.length];
     }
 
     public void handControl() {
-        System.out.print(this.current().name);
+        System.out.print(this.current().name.getText());
         if (!this.current().hasCards()) {
             System.out.println(" wins!");
         } else {
+            this.current().name.setStyle("-fx-font-weight: normal;");
             this.current().displayHand(false);
             Animation.nonBlockingSleep(500, () -> {
                 this.next().takeControl();
-                System.out.println(" hands control over to " + this.current().name);
+                this.current().name.setStyle("-fx-font-weight: bold;");
+                System.out.println(" hands control over to " + this.current().name.getText());
             });
         }
     }

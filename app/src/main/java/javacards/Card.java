@@ -49,30 +49,31 @@ public class Card {
         this.suit = suit;
         this.rank = rank;
         this.deck = deck;
-        Rectangle rec = new Rectangle(135, 210);
+        Rectangle rec = new Rectangle(125, 200);
         rec.setFill(Paint.valueOf(Config.color(this.suit, true)));
+        rec.setX(5);
+        rec.setY(5);
         String e = Config.DIR + suit.charAt(0) + rank + ".png";
         this.img = new Image(e, 135, 210, true, true);
         this.view = new ImageView(Config.BACK);
         this.view.setScaleX(-1);
         this.card = new Group(rec, this.view);
-        this.card.setTranslateX(Math.random() * 20 - 10);
-        this.card.setTranslateY(Math.random() * 20 - 10);
         this.card.setRotate(Config.tilt());
         this.scale = new ScaleTransition(Duration.seconds(0.4), this.card);
         this.scale.setByX(2);
     }
 
-    public void setPlayable() {
+    public boolean play() {
         boolean isValid = Ruleset.checkValid(App.stack.cards.get(0), this);
         if (isValid) {
             App.players.current().playCard(this);
             App.players.handControl();
             setHandler(null);
         }
+        return isValid;
     }
 
-    public void setDrawable() {
+    public void draw() {
         setHandler(true);
 
         deck.dealCard();
@@ -102,9 +103,9 @@ public class Card {
         if (state == null) {    // disable the card
             card.setOnMouseClicked(null);
         } else if (state) {     // make playable by player
-            card.setOnMouseClicked(eh -> setPlayable());
+            card.setOnMouseClicked(eh -> play());
         } else {                // make drawable from deck
-            card.setOnMouseClicked(eh -> setDrawable());
+            card.setOnMouseClicked(eh -> draw());
         }
     }
 

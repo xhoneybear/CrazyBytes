@@ -1,5 +1,8 @@
 package javacards;
 
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+
 /**
  * Represents a player in the game.
  * A player has a hand of cards.
@@ -9,11 +12,11 @@ public class Player implements CrazyEightsPlayer {
     /**
      * Player's name.
      */
-    public final String name;
+    public final Text name;
     /**
      * Player's position on the table.
      */
-    public final int[] position;
+    public final double[] position;
     /**
      * Is the player controlled by AI.
      */
@@ -30,13 +33,21 @@ public class Player implements CrazyEightsPlayer {
     /**
      * Constructor for the Player class.
      *
-     * @param name The player's name.
-     * @param pos  The player's position on the table.
-     * @param AI   Is the player controlled by AI.
+     * @param name  The player's name.
+     * @param pos   The player's position on the table.
+     * @param count The number of players in a game.
+     * @param AI    Is the player controlled by AI.
      */
-    public Player(String name, int[] pos, Boolean AI) {
-        this.name = name;
-        this.position = pos;
+    public Player(String name, int pos, int count, Boolean AI) {
+        long x = Math.round(600 * Math.sin(Math.toRadians(-360/count * pos)));
+        long y = Math.round(300 * Math.cos(Math.toRadians(360/count * pos)));
+        System.out.println(x + " " + y + " " + 360/count * pos);
+        this.position = new double[]{x, y, 360/count * pos};
+        this.name = new Text(name);
+        this.name.setFill(Color.WHITE);
+        this.name.setTranslateX(this.position[0] + Math.signum(this.position[0]) * 150);
+        this.name.setTranslateY(this.position[1] + Math.signum(this.position[1]) * 150);
+        this.name.setRotate((this.position[2] + 90) % 360 <= 180 ? this.position[2] : this.position[2] - 180);
         this.AI = AI;
     }
 
@@ -72,14 +83,22 @@ public class Player implements CrazyEightsPlayer {
         adjustHand();
     }
 
+    private double shift(int mod, int i) {
+        return Math.round(50 * mod * this.position[i]/((2 - i) * Math.sqrt(Math.pow(this.position[0], 2) + Math.pow(this.position[1], 2))));
+    }
+
+    private double ang(int mod, int i) {
+        return Math.pow(Math.abs(mod), 2.4) * Math.signum(this.position[i]);
+    }
+
     private void adjustHand() {
         int mod;
         for (int i = 0; i < hand.cards.size(); i++) {
             mod = 2 * i - (hand.cards.size() - 1);
             double[] pos = new double[]{
-                this.position[0] + 50 * mod * (this.position[0] == 0 ? 1 : 0) + Math.pow(Math.abs(mod), 2.4) * (this.position[0] == 0 ? 0 : Math.signum(this.position[0])),
-                this.position[1] + 50 * mod * (this.position[1] == 0 ? 1 : 0) + Math.pow(Math.abs(mod), 2.4) * (this.position[1] == 0 ? 0 : Math.signum(this.position[1])),
-                this.position[2] + 5 * mod * Math.signum(this.position[1] - this.position[0])
+                this.position[0] + shift(mod, 1) + ang(mod, 0),
+                this.position[1] - shift(mod, 0) + ang(mod, 1),
+                this.position[2] + 5 * mod
             };
             Animation.move(hand.cards.get(hand.cards.size() - i - 1), pos);
         }
@@ -124,20 +143,14 @@ public class Player implements CrazyEightsPlayer {
             Animation.nonBlockingSleep((int)(Math.random() * 1000), () -> {
                 boolean found = false;
                 for (Card card : this.hand.cards) {
-                    if (found = Ruleset.checkValid(App.stack.cards.get(0), card)) {
-                        this.playCard(card);
-                        card.card.setOnMouseClicked(null);
+                    if (found = card.play()) {
                         Animation.flip(card);
                         break;
                     }
                 }
                 if (!found) {
-                    Card drawn = App.deck.dealCard();
-                    this.drawCard(drawn);
-                    drawn.setHandler(true);
-                    App.deck.cards.get(0).setHandler(false);
+                    App.deck.cards.get(0).draw();
                 }
-                App.players.handControl();
             });
         } else {
             this.displayHand();

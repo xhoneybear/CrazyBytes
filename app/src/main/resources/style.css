@@ -2,4 +2,5 @@
     -fx-background-color: #132;
     -fx-background-image: url("bg.png");
     -fx-background-size: 144px;
+    -fx-font-family: "monospace";
 }
