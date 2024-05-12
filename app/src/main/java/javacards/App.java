@@ -166,10 +166,14 @@ public class App extends Application {
         d2.setRotate(10);
         Rectangle buffer = new Rectangle(580, 0);
         Group center = new Group(buffer, p, g, s, e, d1, d2);
+        center.setTranslateX(80);
+        center.setTranslateY(-40);
         menuLayout.setCenter(center);
 
-        Text footer = new Text("Copyright © 2024. All rights reserved.");
+        Text footer = new Text("Created with ♥️ by lisek.dev");
+        footer.setStyle("-fx-font-weight: bold;");
         footer.setFill(Color.WHITE);
+        footer.setTranslateY(-32);
         // menuLayout.setMargin(footer, new Insets(32));
         menuLayout.setBottom(footer);
         menuLayout.setAlignment(footer, Pos.CENTER);
