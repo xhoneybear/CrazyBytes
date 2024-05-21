@@ -1,4 +1,4 @@
-package javacards;
+package dev.lisek.crazybytes.entity;
 
 public interface CrazyEightsPlayer {
     void playCard(Card card);

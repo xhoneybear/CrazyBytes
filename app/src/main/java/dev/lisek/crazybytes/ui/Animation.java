@@ -1,4 +1,7 @@
-package javacards;
+package dev.lisek.crazybytes.ui;
+
+import dev.lisek.crazybytes.entity.Card;
+import dev.lisek.crazybytes.config.Config;
 
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;

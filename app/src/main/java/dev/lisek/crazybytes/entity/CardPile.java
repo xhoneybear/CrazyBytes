@@ -1,15 +1,13 @@
-package javacards;
+package dev.lisek.crazybytes.entity;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
- Represents a pile of cards.
- A pile holds an array of cards and methods to shuffle itself and deal a card.
+ * Represents a pile of cards.
+ * A pile holds an array of cards and methods to shuffle itself and deal a card.
  */
-
-/** A pile for cards. */
 public class CardPile {
     /** List of cards */
     public final List<Card> cards;

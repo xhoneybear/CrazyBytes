@@ -1,18 +1,34 @@
-package javacards;
+package dev.lisek.crazybytes.entity;
 
-import javafx.scene.paint.Color;
+import dev.lisek.crazybytes.App;
+import dev.lisek.crazybytes.config.Config;
+import dev.lisek.crazybytes.ui.Animation;
+import javafx.geometry.Pos;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
 /**
  * Represents a player in the game.
  * A player has a hand of cards.
  */
-
 public class Player implements CrazyEightsPlayer {
     /**
      * Player's name.
      */
     public final Text name;
+    /** 
+     * Player's avatar.
+     */
+    public final ImageView avatar;
+    /**
+     * Player's profile.
+     */
+    public final Profile profile;
+    /**
+     * Player's label.
+     */
+    public final HBox label;
     /**
      * Player's position on the table.
      */
@@ -20,7 +36,7 @@ public class Player implements CrazyEightsPlayer {
     /**
      * Is the player controlled by AI.
      */
-    private final Boolean AI;
+    public final Boolean AI;
     /**
      * Player's points.
      */
@@ -28,7 +44,7 @@ public class Player implements CrazyEightsPlayer {
     /**
      * Player's hand.
      */
-    private final CardPile hand = new CardPile(false);
+    private CardPile hand = new CardPile(false);
 
     /**
      * Constructor for the Player class.
@@ -44,10 +60,21 @@ public class Player implements CrazyEightsPlayer {
         System.out.println(x + " " + y + " " + 360/count * pos);
         this.position = new double[]{x, y, 360/count * pos};
         this.name = new Text(name);
-        this.name.setFill(Color.WHITE);
-        this.name.setTranslateX(this.position[0] + this.position[0]/600 * 150);
-        this.name.setTranslateY(this.position[1] + this.position[1]/300 * 150);
-        this.name.setRotate((this.position[2] + 90) % 360 <= 180 ? this.position[2] : this.position[2] - 180);
+        if (AI) {
+            this.avatar = new ImageView(Config.BOT);
+        } else {
+            this.avatar = new ImageView(Config.HUMAN);
+        }
+        this.avatar.setFitHeight(24);
+        this.avatar.setFitWidth(24);
+        this.profile = new Profile(this.name.getText(), this.avatar.getImage().getUrl(), 0, 0, 0);
+        this.label = new HBox(this.avatar, this.name);
+        this.label.setMouseTransparent(true);
+        this.label.setAlignment(Pos.CENTER);
+        this.label.setSpacing(8);
+        this.label.setTranslateX(this.position[0] + this.position[0]/600 * 150);
+        this.label.setTranslateY(this.position[1] + this.position[1]/300 * 150);
+        this.label.setRotate((this.position[2] + 90) % 360 <= 180 ? this.position[2] : this.position[2] - 180);
         this.AI = AI;
     }
 
@@ -83,14 +110,32 @@ public class Player implements CrazyEightsPlayer {
         adjustHand();
     }
 
+    /**
+     * Shifts a card horizontally in the player's hand.
+     * Causes the cards to be spread.
+     * @param mod   The shift amount.
+     * @param i     The index of the card.
+     */
     private double shift(int mod, int i) {
         return Math.round(50 * mod * this.position[i]/((2 - i) * Math.sqrt(Math.pow(this.position[0], 2) + Math.pow(this.position[1], 2))));
     }
 
+    /**
+     * Shifts a card vertically in the player's hand.
+     * Causes the cards to make an angle.
+     * @param mod   The shift amount.
+     * @param i     The index of the card.
+     */
     private double ang(int mod, int i) {
         return Math.pow(Math.abs(mod), 2.4) * Math.signum(this.position[i]);
     }
 
+    /**
+     * Adjusts the position of the cards in the player's hand.
+     * Causes the cards to be fan-shaped.
+     * @see shift(int, int)
+     * @see ang(int, int)
+     */
     private void adjustHand() {
         int mod;
         for (int i = 0; i < hand.cards.size(); i++) {
@@ -111,7 +156,9 @@ public class Player implements CrazyEightsPlayer {
      */
     @Override
     public void playCard(Card card) {
-        App.stack.add(hand.cards.remove(hand.cards.indexOf(card)));
+        System.out.println(card);
+        System.out.println(hand.cards);
+        App.game.stack.add(hand.cards.remove(hand.cards.indexOf(card)));
         System.out.println("Removed card: " + card.toString());
         card.card.toFront();
         Animation.move(card, new double[]{0, 0, Config.tilt()});
@@ -130,14 +177,31 @@ public class Player implements CrazyEightsPlayer {
             }
         }
     }
+    /**
+     * Shorthand for displayHand(true).
+     * @see displayHand(boolean)
+     */
     public void displayHand() {
         displayHand(true);
     }
 
+    public void flushHand() {
+        this.hand = new CardPile(false);
+    }
+
+    /**
+     * Checks if the player has cards in their hand.
+     * @return True if the player has cards in their hand.
+     */
     public boolean hasCards() {
         return !this.hand.cards.isEmpty();
     }
 
+    /**
+     * Interface to receive control in game.
+     * If the player is CPU, it sheds the first valid card or draws one.
+     * If the player is human, it displays the player's hand.
+     */
     public void takeControl() {
         if (this.AI) {
             Animation.nonBlockingSleep((int)(Math.random() * 1000), () -> {
@@ -149,7 +213,7 @@ public class Player implements CrazyEightsPlayer {
                     }
                 }
                 if (!found) {
-                    App.deck.cards.get(0).draw();
+                    App.game.deck.cards.get(0).draw();
                 }
             });
         } else {

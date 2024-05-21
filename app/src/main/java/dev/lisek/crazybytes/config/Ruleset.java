@@ -1,4 +1,6 @@
-package javacards;
+package dev.lisek.crazybytes.config;
+
+import dev.lisek.crazybytes.entity.Card;
 
 public class Ruleset {
     public final static boolean checkValid(Card deck, Card player) {
