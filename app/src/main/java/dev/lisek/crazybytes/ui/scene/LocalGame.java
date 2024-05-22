@@ -141,11 +141,6 @@ public class LocalGame extends Scene {
             }
         }
 
-        // for (int i = 0; i < 3; i++) {
-        //     toggles[i] = new RadioButton("Test " + i);
-        //     toggles[i].setToggleGroup(mode);
-        // }
-
         VBox modes = new VBox(toggles);
         VBox modifiers = new VBox();
 

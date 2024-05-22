@@ -13,6 +13,7 @@ public class Players {
     public final Player[] players;
     public final int length;
     public int offset = 0;
+    public int plays = 0;
     private int current;
 
     public Players(int offset, Pair<String, Boolean> ... players) {
@@ -52,10 +53,20 @@ public class Players {
     }
 
     public void handControl() {
+        this.plays++;
         System.out.print(this.current().name.getText());
         if (!this.current().hasCards()) {
             System.out.println(" wins!");
             App.game.layout.getChildren().add(new PostGame(this.current().profile));
+        } else if (App.game.rounds != 0 && this.plays > App.game.rounds * this.length) {
+            Player winner = this.current();
+            for (Player player : this.players) {
+                player.displayHand();
+                if (App.game.getScore(winner.getHand()) < App.game.getScore(player.getHand()))
+                    winner = player;
+            }
+            System.out.println(winner.name.getText() + " wins!");
+            App.game.layout.getChildren().add(new PostGame(winner.profile));
         } else {
             this.current().name.setStyle("-fx-font-weight: normal;");
             if (App.game.local)
@@ -70,6 +81,7 @@ public class Players {
     }
 
     public Players retain() {
+        this.plays = 0;
         for (Player player : players) {
             player.flushHand();
         }

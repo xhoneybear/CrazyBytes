@@ -38,6 +38,7 @@ public abstract class Game extends Scene {
     public final CardPile stack = new CardPile(false);
     public final Players players;
     public final boolean local;
+    public int rounds;
     int cards;
 
     public Game(Players players, boolean local) {
@@ -64,11 +65,14 @@ public abstract class Game extends Scene {
             board.getChildren().add(player.label);
         }
     }
-    public Game(Players players) {
-        this(players, false);
-    }
+
+    public abstract boolean play(Card card);
+
+    public abstract void draw(Card card);
 
     public abstract void computerMove(Player player);
+
+    public abstract int getScore(CardPile hand);
 
     private void deal(int pass) {
         if (pass == this.cards * players.length) {

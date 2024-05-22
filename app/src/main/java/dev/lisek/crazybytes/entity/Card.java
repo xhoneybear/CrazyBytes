@@ -2,8 +2,6 @@ package dev.lisek.crazybytes.entity;
 
 import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.config.Config;
-import dev.lisek.crazybytes.config.Ruleset;
-import dev.lisek.crazybytes.ui.Animation;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
@@ -59,49 +57,6 @@ public class Card extends Group {
     }
 
     /**
-     * Checks the validity of the move and plays the card if it is valid.
-     * @return True if the move is valid, false otherwise.
-     * @see setHandler(boolean)
-     * @see Player#takeControl()
-     */
-    public boolean play() {
-        boolean isValid = Ruleset.checkValid(App.game.stack.cards.get(0), this);
-        if (isValid) {
-            App.game.players.current().playCard(this);
-            App.game.players.handControl();
-            setHandler(null);
-        }
-        return isValid;
-    }
-
-    /**
-     * Draws and animates the card.
-     * @see setHandler(boolean)
-     * @see Player#takeControl()
-     */
-    public void draw() {
-        setHandler(true);
-
-        deck.dealCard();
-        App.game.players.current().drawCard(this);
-        if (deck.cards.isEmpty()) {
-            Card top = App.game.stack.dealCard();
-            App.game.stack.shuffle();
-            while (!App.game.stack.cards.isEmpty()) {
-                Card temp = App.game.stack.dealCard();
-                deck.add(temp);
-                Animation.move(temp, new double[]{-210, 0});
-                Animation.flip(temp);
-                temp.toFront();
-            }
-            deck.activate();
-            App.game.stack.add(top);
-        }
-        deck.cards.get(0).setHandler(false);
-        App.game.players.handControl();
-    }
-
-    /**
      * Sets the handler for the card.
      * @param state The new handler state.
      * @see play()
@@ -111,9 +66,9 @@ public class Card extends Group {
         if (state == null) {    // disable the card
             this.setOnMouseClicked(null);
         } else if (state) {     // make playable by player
-            this.setOnMouseClicked(eh -> play());
+            this.setOnMouseClicked(eh -> App.game.play(this));
         } else {                // make drawable from deck
-            this.setOnMouseClicked(eh -> draw());
+            this.setOnMouseClicked(eh -> App.game.draw(this));
         }
     }
 
