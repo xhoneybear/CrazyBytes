@@ -18,7 +18,7 @@ import javafx.util.Duration;
  * It also contains methods to get and set the suit and rank of the card.
  * It also contains a method to return a string representation of the card.
  */
-public class Card {
+public class Card extends Group {
     /** The suit of the card (hearts, diamonds, clubs, spades). */
     private final String suit;
     /** The rank of the card (1 - 13). */
@@ -29,8 +29,6 @@ public class Card {
     public final Image img;
     /** ImageView representing the card. */
     public final ImageView view;
-    /** Card's graphical representation. */
-    public final Group card;
     /** Card's orientation (true if face up) */
     public boolean visible = false;
     /** Card's transition for use with flip animation. */
@@ -54,9 +52,9 @@ public class Card {
         this.img = new Image(e, 135, 210, true, true);
         this.view = new ImageView(Config.BACK);
         this.view.setScaleX(-1);
-        this.card = new Group(rec, this.view);
-        this.card.setRotate(Config.tilt());
-        this.scale = new ScaleTransition(Duration.seconds(0.4), this.card);
+        this.getChildren().addAll(rec, this.view);
+        this.setRotate(Config.tilt());
+        this.scale = new ScaleTransition(Duration.seconds(0.4), this);
         this.scale.setByX(2);
     }
 
@@ -86,8 +84,6 @@ public class Card {
 
         deck.dealCard();
         App.game.players.current().drawCard(this);
-        if (!App.game.local && !App.game.players.current().AI)
-            Animation.flip(this);
         if (deck.cards.isEmpty()) {
             Card top = App.game.stack.dealCard();
             App.game.stack.shuffle();
@@ -96,7 +92,7 @@ public class Card {
                 deck.add(temp);
                 Animation.move(temp, new double[]{-210, 0});
                 Animation.flip(temp);
-                temp.card.toFront();
+                temp.toFront();
             }
             deck.activate();
             App.game.stack.add(top);
@@ -113,11 +109,11 @@ public class Card {
      */
     public final void setHandler(Boolean state) {
         if (state == null) {    // disable the card
-            card.setOnMouseClicked(null);
+            this.setOnMouseClicked(null);
         } else if (state) {     // make playable by player
-            card.setOnMouseClicked(eh -> play());
+            this.setOnMouseClicked(eh -> play());
         } else {                // make drawable from deck
-            card.setOnMouseClicked(eh -> draw());
+            this.setOnMouseClicked(eh -> draw());
         }
     }
 

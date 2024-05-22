@@ -1,5 +1,7 @@
 package dev.lisek.crazybytes.ui.scene;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import dev.lisek.crazybytes.App;
@@ -32,7 +34,6 @@ class PlayerEntry extends HBox {
     CheckBox human;
     TextField name;
     public PlayerEntry(VBox players) {
-        super();
         this.setAlignment(Pos.TOP_CENTER);
         ImageView icon = new ImageView(Config.BOT);
         icon.setMouseTransparent(true);
@@ -66,7 +67,6 @@ class PlayerEntry extends HBox {
 
 class MenuSection extends StackPane {
     public MenuSection(int sections, VBox fg) {
-        super();
         Rectangle[] rec = new Rectangle[sections + 2];
         int len;
 
@@ -104,7 +104,6 @@ public class LocalGame extends Scene {
         Group middle = new Group(new Rectangle(0, 640), playerList);
         add.setOnAction(eh -> playerList.getChildren().add(new PlayerEntry(playerList)));
         Button play = new Button("Play");
-        play.setOnAction(eh -> startGame(playerList.getChildren()));
         Button exit = new Button("Exit");
         exit.setOnAction(eh -> App.stage.setScene(App.menu));
         HBox hb = new HBox(play, exit);
@@ -133,7 +132,11 @@ public class LocalGame extends Scene {
             for (Class<?> c : widgetClassNames) {
                 toggles[idx] = new RadioButton(c.getSimpleName());
                 toggles[idx].setToggleGroup(mode);
-                toggles[idx].setOnAction(eh -> play.setOnAction(eh1 -> startGame(playerList.getChildren())));
+                toggles[idx].setOnAction(
+                    eh1 -> play.setOnAction(
+                        eh2 -> startGame(c.getConstructors()[0], playerList.getChildren())
+                    )
+                );
                 idx++;
             }
         }
@@ -162,7 +165,7 @@ public class LocalGame extends Scene {
         layout.getChildren().addAll(bg, fg);
     }
 
-    private void startGame(ObservableList playerList) {
+    private void startGame(Constructor<?> constructor, ObservableList playerList) {
         Pair<String, Boolean>[] players = new Pair[playerList.size()];
         String name;
         boolean human,
@@ -183,6 +186,11 @@ public class LocalGame extends Scene {
             local = false;
             offset = idx;
         }
-        App.game = new Game(new Players(offset, players), local);
+        try {
+            App.game = (Game) constructor.newInstance(new Players(offset, players), local);
+            App.game.start();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 }

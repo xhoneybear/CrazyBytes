@@ -32,7 +32,6 @@ public class ProfileCard extends HBox {
     private final Profile profile;
 
     public ProfileCard(Profile profile) {
-        super();
         this.profile = profile;
 
         this.name = new Text(profile.name);

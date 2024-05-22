@@ -16,7 +16,6 @@ import javafx.scene.paint.Color;
 
 class GameMenu extends StackPane {
     GameMenu(StackPane layout) {
-        super();
         StackPane bg = new StackPane();
         bg.setBackground(Background.fill(Color.BLACK));
         bg.setOpacity(0.5);
@@ -31,7 +30,7 @@ class GameMenu extends StackPane {
     }
 }
 
-public class Game extends Scene {
+public abstract class Game extends Scene {
 
     public static StackPane layout;
 
@@ -39,6 +38,7 @@ public class Game extends Scene {
     public final CardPile stack = new CardPile(false);
     public final Players players;
     public final boolean local;
+    int cards;
 
     public Game(Players players, boolean local) {
         super(layout = new StackPane(), 1600, 1000);
@@ -58,20 +58,20 @@ public class Game extends Scene {
         layout.setAlignment(menu, Pos.TOP_LEFT);
 
         for (int i = 51; i >= 0; i--) {
-            board.getChildren().add(deck.cards.get(i).card);
+            board.getChildren().add(deck.cards.get(i));
         }
         for (Player player : players.players) {
             board.getChildren().add(player.label);
         }
-
-        startGame();
     }
     public Game(Players players) {
         this(players, false);
     }
 
+    public abstract void computerMove(Player player);
+
     private void deal(int pass) {
-        if (pass == 5 * players.length) {
+        if (pass == this.cards * players.length) {
             begin();
             return;
         }
@@ -89,7 +89,7 @@ public class Game extends Scene {
         deck.activate();
     }
 
-    private void startGame() {
+    public void start() {
         App.stage.setScene(this);
         deal(0);
     }

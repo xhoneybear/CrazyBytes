@@ -1,5 +1,7 @@
 package dev.lisek.crazybytes.ui.element;
 
+import java.lang.reflect.InvocationTargetException;
+
 import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.entity.Profile;
 import dev.lisek.crazybytes.game.Game;
@@ -13,7 +15,6 @@ import javafx.scene.text.Text;
 
 public class PostGame extends StackPane {
     public PostGame(Profile winner) {
-        super();
         StackPane bg = new StackPane();
         bg.setBackground(Background.fill(Color.BLACK));
         bg.setOpacity(0.5);
@@ -21,8 +22,16 @@ public class PostGame extends StackPane {
         text.setStyle("-fx-font-weight: bold; -fx-font-size: 24px; -fx-fill: white;");
         Button replay = new Button("Play again");
         replay.setOnAction(eh -> {
-            App.game = new Game(App.game.players.retain());
-            App.stage.setScene(App.game);
+            try {
+                App.game = (Game) App.game
+                    .getClass()
+                    .getConstructors()[0]
+                    .newInstance(App.game.players.retain(), App.game.local);
+                App.stage.setScene(App.game);
+                App.game.start();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
         });
         Button exit = new Button("Exit");
         exit.setOnAction(eh -> App.stage.setScene(App.menu));

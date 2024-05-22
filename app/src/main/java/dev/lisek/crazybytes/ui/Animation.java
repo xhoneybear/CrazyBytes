@@ -34,11 +34,11 @@ public class Animation {
      * @param pos The position to move to.
      */
     public static void move(Card card, double[] pos) {
-        TranslateTransition move = new TranslateTransition(Duration.seconds(0.4), card.card);
+        TranslateTransition move = new TranslateTransition(Duration.seconds(0.4), card);
         move.setToX(pos[0]);
         move.setToY(pos[1]);
         if (pos.length == 3) {
-            RotateTransition rotate = new RotateTransition(Duration.seconds(0.4), card.card);
+            RotateTransition rotate = new RotateTransition(Duration.seconds(0.4), card);
             rotate.setToAngle(pos[2]);
             rotate.play();
         }

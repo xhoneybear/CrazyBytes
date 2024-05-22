@@ -104,9 +104,11 @@ public class Player implements CrazyEightsPlayer {
     @Override
     public void drawCard(Card card) {
         hand.add(card);
+        if (!App.game.local && !App.game.players.current().AI)
+            Animation.flip(card);
         card.setHandler(true);
         System.out.println("Added card: " + card);
-        card.card.toFront();
+        card.toFront();
         adjustHand();
     }
 
@@ -160,7 +162,7 @@ public class Player implements CrazyEightsPlayer {
         System.out.println(hand.cards);
         App.game.stack.add(hand.cards.remove(hand.cards.indexOf(card)));
         System.out.println("Removed card: " + card.toString());
-        card.card.toFront();
+        card.toFront();
         Animation.move(card, new double[]{0, 0, Config.tilt()});
         adjustHand();
     }
@@ -204,18 +206,7 @@ public class Player implements CrazyEightsPlayer {
      */
     public void takeControl() {
         if (this.AI) {
-            Animation.nonBlockingSleep((int)(Math.random() * 1000), () -> {
-                boolean found = false;
-                for (Card card : this.hand.cards) {
-                    if (found = card.play()) {
-                        Animation.flip(card);
-                        break;
-                    }
-                }
-                if (!found) {
-                    App.game.deck.cards.get(0).draw();
-                }
-            });
+            App.game.computerMove(this);
         } else {
             this.displayHand();
         }

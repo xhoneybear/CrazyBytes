@@ -21,7 +21,6 @@ import javafx.scene.text.Text;
 
 class ButtonTransform extends PerspectiveTransform {
     ButtonTransform() {
-        super();
         this.setUrx(281);
         this.setLly(100);
         this.setLrx(257);
@@ -33,7 +32,6 @@ class MenuButton extends StackPane {
     static final ButtonTransform pt = new ButtonTransform();
 
     MenuButton(int i, String text, String color) {
-        super();
         Rectangle rec = new Rectangle(281, 100);
         rec.setFill(Paint.valueOf(color));
         rec.setEffect(pt);
