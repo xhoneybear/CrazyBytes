@@ -2,7 +2,6 @@ package dev.lisek.crazybytes.entity;
 
 import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.ui.Animation;
-import dev.lisek.crazybytes.ui.element.PostGame;
 import javafx.util.Pair;
 
 /**
@@ -29,17 +28,6 @@ public class Players {
         this(0, players);
     }
 
-    // public Players(int bots) {
-    //     this.length = 1 + bots;
-    //     this.players = new Player[this.length];
-    //     this.players[0] = new Player(App.profile.card.name.getText(), 0, this.length, false);
-    //     BotNames botNames = new BotNames();
-    //     for (int i = 1; i < this.length; i++) {
-    //         this.players[i] = new Player(botNames.getName(i), i + offset, this.length, true);
-    //     }
-    //     this.current = this.length - 1;
-    // }
-
     private int pos(int i) {
         return (this.length + i - this.offset) % this.length;
     }
@@ -55,19 +43,7 @@ public class Players {
     public void handControl() {
         this.plays++;
         System.out.print(this.current().name.getText());
-        if (!this.current().hasCards()) {
-            System.out.println(" wins!");
-            App.game.layout.getChildren().add(new PostGame(this.current().profile));
-        } else if (App.game.rounds != 0 && this.plays > App.game.rounds * this.length) {
-            Player winner = this.current();
-            for (Player player : this.players) {
-                player.displayHand();
-                if (App.game.getScore(winner.getHand()) < App.game.getScore(player.getHand()))
-                    winner = player;
-            }
-            System.out.println(winner.name.getText() + " wins!");
-            App.game.layout.getChildren().add(new PostGame(winner.profile));
-        } else {
+        if (!App.game.checkWin()) {
             this.current().name.setStyle("-fx-font-weight: normal;");
             if (App.game.local)
                 this.current().displayHand(false);

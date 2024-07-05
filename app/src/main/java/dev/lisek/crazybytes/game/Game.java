@@ -72,7 +72,7 @@ public abstract class Game extends Scene {
 
     public abstract void computerMove(Player player);
 
-    public abstract int getScore(CardPile hand);
+    public abstract boolean checkWin();
 
     private void deal(int pass) {
         if (pass == this.cards * players.length) {

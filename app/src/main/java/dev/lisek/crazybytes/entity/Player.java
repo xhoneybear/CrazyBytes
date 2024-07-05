@@ -41,6 +41,8 @@ public class Player implements CrazyEightsPlayer {
      * Player's points.
      */
     private int points = 0;
+
+    private Text point = new Text("(%d)".formatted(this.points));
     /**
      * Player's hand.
      */
@@ -68,7 +70,7 @@ public class Player implements CrazyEightsPlayer {
         this.avatar.setFitHeight(24);
         this.avatar.setFitWidth(24);
         this.profile = new Profile(this.name.getText(), this.avatar.getImage().getUrl(), 0, 0, 0);
-        this.label = new HBox(this.avatar, this.name);
+        this.label = new HBox(this.avatar, this.name, this.point);
         this.label.setMouseTransparent(true);
         this.label.setAlignment(Pos.CENTER);
         this.label.setSpacing(8);
@@ -191,6 +193,14 @@ public class Player implements CrazyEightsPlayer {
         this.hand = new CardPile(false);
     }
 
+    public int countHand() {
+        int pts = 0;
+        for (Card card : hand.cards) {
+            pts += card.getRank() > 10 ? 10 : card.getRank() == 8 ? 50 : card.getRank();
+        }
+        return pts;
+    }
+
     /**
      * Checks if the player has cards in their hand.
      * @return True if the player has cards in their hand.
@@ -218,6 +228,13 @@ public class Player implements CrazyEightsPlayer {
     }
 
     @Override
-    public void collectPayment() {
+    public int collectPayment() {
+        int payment = 0;
+        for (int i = 0; i < App.game.players.length; i++) {
+            payment += App.game.players.next().countHand();
+        }
+        this.points += payment;
+        this.point.setText("(%d)".formatted(this.points));
+        return payment;
     }
 }

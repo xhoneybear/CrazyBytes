@@ -1,17 +1,23 @@
 package dev.lisek.crazybytes.ui.element;
 
+import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.config.Config;
 import dev.lisek.crazybytes.entity.Profile;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
 class Bar extends Rectangle {
     public Bar(int x, int y) {
@@ -31,13 +37,38 @@ public class ProfileCard extends HBox {
     public final VBox data;
     private final Profile profile;
 
-    public ProfileCard(Profile profile) {
+    public ProfileCard(Profile profile, boolean editable) {
         this.profile = profile;
 
         this.name = new Text(profile.name);
         this.name.setStyle("-fx-font-weight: bold; -fx-font-size: 18px;");
         this.name.setFill(Color.WHITE);
-        this.name.setWrappingWidth(240);
+
+        TextField nameField = new TextField(profile.name);
+        nameField.setMouseTransparent(true);
+        nameField.setOpacity(0);
+        nameField.setOnKeyPressed(eh -> {
+            if (eh.getCode() == KeyCode.ENTER) {
+                this.profile.update("name", nameField.getText());
+                nameField.setMouseTransparent(true);
+                nameField.setOpacity(0);
+                this.name.requestFocus();
+            }
+        });
+        ImageView editName = new ImageView(new Image(Config.DIR + "icons/edit.png", 16, 16, true, true));
+        editName.setTranslateY(4);
+        editName.setOpacity(0);
+        editName.setCursor(Cursor.HAND);
+        editName.setOnMouseClicked(eh -> {
+            nameField.setMouseTransparent(false);
+            nameField.setOpacity(1);
+            nameField.requestFocus();
+        });
+        HBox nameEditable = new HBox(this.name, editName);
+        StackPane nameBox = new StackPane(nameEditable, nameField);
+        nameEditable.setSpacing(8);
+        nameBox.setOnMouseEntered(eh -> editName.setOpacity(1));
+        nameBox.setOnMouseExited(eh -> editName.setOpacity(0));
 
         this.image = new ImageView(new Image(profile.avatar, 96, 96, true, true));
         this.image.setX(12);
@@ -46,7 +77,20 @@ public class ProfileCard extends HBox {
         Rectangle base = new Rectangle(96, 96);
         base.setX(12);
         base.setY(12);
-        this.avatar = new Group(base, this.image, this.border);
+
+        ImageView editImg = new ImageView(new Image(Config.DIR + "icons/edit.png", 48, 48, true, true));
+        editImg.setX(24);
+        editImg.setY(24);
+        Group edit = new Group(new Rectangle(96, 96), editImg);
+        edit.setTranslateX(12);
+        edit.setTranslateY(12);
+        edit.setOpacity(0);
+        edit.setCursor(Cursor.HAND);
+        edit.setOnMouseClicked(eh -> this.profile.update("avatar", "file://" + new FileChooser().showOpenDialog(App.stage).getAbsolutePath()));
+
+        this.avatar = new Group(base, this.image, edit, this.border);
+        this.avatar.setOnMouseEntered(eh -> edit.setOpacity(0.5));
+        this.avatar.setOnMouseExited(eh -> edit.setOpacity(0));
 
         this.exp = new Text("" + profile.exp);
         this.lvl = new Text(Integer.toString(profile.exp/100));
@@ -71,7 +115,7 @@ public class ProfileCard extends HBox {
         w.setStyle("-fx-font-weight: bold;");
 
         this.data = new VBox(
-            this.name,
+            nameBox,
             xpLvl,
             new HBox(e, this.exp),
             new HBox(g, this.games),
@@ -97,5 +141,8 @@ public class ProfileCard extends HBox {
             case "games" -> this.games.setText(Integer.toString(profile.games));
             case "wins" -> this.wins.setText(Integer.toString(profile.wins));
         }
+    }
+    public ProfileCard(Profile profile) {
+        this(profile, false);
     }
 }

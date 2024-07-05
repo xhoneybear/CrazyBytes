@@ -13,7 +13,9 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -21,6 +23,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -52,14 +55,12 @@ class PlayerEntry extends HBox {
         this.name = new TextField(BotNames.random());
         this.name.setPrefWidth(240);
         this.name.setPrefHeight(48);
-        Button random = new Button("#");
-        random.setPrefWidth(48);
-        random.setPrefHeight(48);
-        random.setOnAction(eh -> this.name.setText(BotNames.random()));
-        Button remove = new Button("-");
-        remove.setPrefWidth(48);
-        remove.setPrefHeight(48);
-        remove.setOnAction(eh -> players.getChildren().remove(this));
+        ImageView random = new ImageView(new Image(Config.DIR + "icons/random.png", 48, 48, true, true));
+        random.setCursor(Cursor.HAND);
+        random.setOnMouseClicked(eh -> this.name.setText(BotNames.random()));
+        ImageView remove = new ImageView(new Image(Config.DIR + "icons/user-minus.png", 48, 48, true, true));
+        remove.setCursor(Cursor.HAND);
+        remove.setOnMouseClicked(eh -> players.getChildren().remove(this));
         this.getChildren().addAll(avatar, this.name, random, remove);
         this.setSpacing(8);
     }
@@ -98,11 +99,15 @@ public class LocalGame extends Scene {
         bg.setArcHeight(40);
         bg.setFill(Color.DARKGREEN);
 
-        Button add = new Button("+");
         VBox playerList = new VBox();
         playerList.setSpacing(16);
         Group middle = new Group(new Rectangle(0, 640), playerList);
-        add.setOnAction(eh -> playerList.getChildren().add(new PlayerEntry(playerList)));
+        ImageView add = new ImageView(new Image(Config.DIR + "icons/user-plus.png", 48, 48, true, true));
+        add.setCursor(Cursor.HAND);
+        add.setOnMouseClicked(eh -> {
+            if (playerList.getChildren().size() < 10)
+                playerList.getChildren().add(new PlayerEntry(playerList));
+        });
         Button play = new Button("Play");
         Button exit = new Button("Exit");
         exit.setOnAction(eh -> App.stage.setScene(App.menu));
@@ -120,6 +125,7 @@ public class LocalGame extends Scene {
 
         ToggleGroup mode = new ToggleGroup();
         RadioButton[] toggles;
+        VBox modifiers = new VBox();
 
         try (ScanResult scanResult = new ClassGraph()
             .enableAllInfo()
@@ -133,16 +139,25 @@ public class LocalGame extends Scene {
                 toggles[idx] = new RadioButton(c.getSimpleName());
                 toggles[idx].setToggleGroup(mode);
                 toggles[idx].setOnAction(
-                    eh1 -> play.setOnAction(
-                        eh2 -> startGame(c.getConstructors()[0], playerList.getChildren())
-                    )
+                    eh1 -> {
+                        try {
+                            modifiers.getChildren().clear();
+                            modifiers.getChildren().addAll((CheckBox[]) c.getField("modifiers").get(null));
+                        } catch (NoSuchFieldException | IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                        play.setOnAction(
+                            eh2 -> startGame(c.getConstructors()[0], playerList.getChildren())
+                        );
+                    }
                 );
                 idx++;
             }
         }
 
         VBox modes = new VBox(toggles);
-        VBox modifiers = new VBox();
+        modes.setPadding(new Insets(20));
+        modes.setSpacing(16);
 
         StackPane modesWrapper = new StackPane(new Rectangle(0, 310), modes);
         StackPane modifiersWrapper = new StackPane(new Rectangle(0, 310), modifiers);

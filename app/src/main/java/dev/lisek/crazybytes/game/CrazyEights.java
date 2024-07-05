@@ -2,10 +2,11 @@ package dev.lisek.crazybytes.game;
 
 import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.entity.Card;
-import dev.lisek.crazybytes.entity.CardPile;
 import dev.lisek.crazybytes.entity.Player;
 import dev.lisek.crazybytes.entity.Players;
 import dev.lisek.crazybytes.ui.Animation;
+import dev.lisek.crazybytes.ui.element.PostGame;
+import javafx.scene.control.CheckBox;
 
 public class CrazyEights extends Game {
 
@@ -18,6 +19,17 @@ public class CrazyEights extends Game {
             );
         }
     }
+
+    public static CheckBox[] modifiers = new CheckBox[] {
+        new CheckBox("No points"),
+        new CheckBox("Countdown"),
+        new CheckBox("Quickdraw"),
+        new CheckBox("Queen skip"),
+        new CheckBox("Ace reverse"),
+        new CheckBox("7 exchange"),
+        new CheckBox("Draw 2"),
+        new CheckBox("Draw 4"),
+    };
 
     public CrazyEights(Players players, boolean local) {
         super(players, local);
@@ -91,7 +103,20 @@ public class CrazyEights extends Game {
     }
 
     @Override
-    public int getScore(CardPile hand) {
-        return 0;
+    public boolean checkWin() {
+        boolean status = !this.players.current().hasCards();
+        if (status) {
+            for (int i = 0; i < this.players.length; i++) {
+                this.players.next().displayHand();
+            }
+            System.out.println(" wins %d points!".formatted(this.players.current().collectPayment()));
+            if (this.players.current().getPoints() >= 50 * this.players.length) {
+                System.out.println("Game over!");
+                App.game.layout.getChildren().add(new PostGame(this.players.current().profile));
+            } else {
+                Animation.nonBlockingSleep(5000, () -> PostGame.replay());
+            }
+        }
+        return status;
     }
 }

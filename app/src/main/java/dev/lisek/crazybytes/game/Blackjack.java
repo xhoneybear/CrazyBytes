@@ -6,6 +6,7 @@ import dev.lisek.crazybytes.entity.CardPile;
 import dev.lisek.crazybytes.entity.Player;
 import dev.lisek.crazybytes.entity.Players;
 import dev.lisek.crazybytes.ui.Animation;
+import dev.lisek.crazybytes.ui.element.PostGame;
 
 public class Blackjack extends Game {
 
@@ -83,7 +84,7 @@ public class Blackjack extends Game {
     @Override
     public void computerMove(Player player) {
         Animation.nonBlockingSleep((int)(Math.random() * 1000), () -> {
-            if (getScore(player.getHand()) != 0 && getScore(player.getHand()) + Math.random() * 5 < 21) {
+            if (Ruleset.getScore(player.getHand()) != 0 && Ruleset.getScore(player.getHand()) + Math.random() * 5 < 20) {
                 draw(App.game.deck.cards.get(0));
                 player.takeControl();
             } else {
@@ -93,7 +94,18 @@ public class Blackjack extends Game {
     }
 
     @Override
-    public int getScore(CardPile hand) {
-        return Ruleset.getScore(hand);
+    public boolean checkWin() {
+        if (this.players.plays > App.game.rounds * this.players.length) {
+            Player winner = this.players.current();
+            for (Player player : this.players.players) {
+                player.displayHand();
+                if (Ruleset.getScore(player.getHand()) > Ruleset.getScore(winner.getHand()))
+                    winner = player;
+            }
+            System.out.println(winner.name.getText() + " wins!");
+            App.game.layout.getChildren().add(new PostGame(winner.profile));
+            return true;
+        }
+        return false;
     }
 }

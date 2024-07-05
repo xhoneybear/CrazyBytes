@@ -21,22 +21,24 @@ public class PostGame extends StackPane {
         Text text = new Text("WINNER!");
         text.setStyle("-fx-font-weight: bold; -fx-font-size: 24px; -fx-fill: white;");
         Button replay = new Button("Play again");
-        replay.setOnAction(eh -> {
-            try {
-                App.game = (Game) App.game
-                    .getClass()
-                    .getConstructors()[0]
-                    .newInstance(App.game.players.retain(), App.game.local);
-                App.stage.setScene(App.game);
-                App.game.start();
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        });
+        replay.setOnAction(eh -> replay());
         Button exit = new Button("Exit");
         exit.setOnAction(eh -> App.stage.setScene(App.menu));
         VBox vb = new VBox(text, winner.card, replay, exit);
         vb.setAlignment(Pos.CENTER);
         this.getChildren().addAll(bg, vb);
+    }
+
+    public static void replay() {
+        try {
+            App.game = (Game) App.game
+                .getClass()
+                .getConstructors()[0]
+                .newInstance(App.game.players.retain(), App.game.local);
+            App.stage.setScene(App.game);
+            App.game.start();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -4,7 +4,7 @@ public interface CrazyEightsPlayer {
     void playCard(Card card);
     void drawCard(Card card);
     void passTurn(int turn);
-    void collectPayment();
+    int collectPayment();
 }
 
 
