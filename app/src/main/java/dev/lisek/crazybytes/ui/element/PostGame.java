@@ -19,7 +19,7 @@ public class PostGame extends StackPane {
         bg.setBackground(Background.fill(Color.BLACK));
         bg.setOpacity(0.5);
         Text text = new Text("WINNER!");
-        text.setStyle("-fx-font-weight: bold; -fx-font-size: 24px; -fx-fill: white;");
+        text.setStyle("-fx-font-weight: bold; -fx-font-size: 24px");
         Button replay = new Button("Play again");
         replay.setOnAction(eh -> replay());
         Button exit = new Button("Exit");
@@ -34,7 +34,7 @@ public class PostGame extends StackPane {
             App.game = (Game) App.game
                 .getClass()
                 .getConstructors()[0]
-                .newInstance(App.game.players.retain(), App.game.local);
+                .newInstance(App.game.players.retain(), App.game.hotseat);
             App.stage.setScene(App.game);
             App.game.start();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

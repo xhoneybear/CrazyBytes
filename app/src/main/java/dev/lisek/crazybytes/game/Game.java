@@ -37,16 +37,16 @@ public abstract class Game extends Scene {
     public final CardPile deck = new CardPile(true);
     public final CardPile stack = new CardPile(false);
     public final Players players;
-    public final boolean local;
+    public final boolean hotseat;
     public int rounds;
     int cards;
 
-    public Game(Players players, boolean local) {
+    public Game(Players players, boolean hotseat) {
         super(layout = new StackPane(), 1600, 1000);
         this.getStylesheets().add("style.css");
 
         this.players = players;
-        this.local = local;
+        this.hotseat = hotseat;
 
         StackPane board = new StackPane();
 

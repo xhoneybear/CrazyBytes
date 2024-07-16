@@ -29,8 +29,8 @@ public class Blackjack extends Game {
         }
     }
 
-    public Blackjack(Players players, boolean local) {
-        super(players, local);
+    public Blackjack(Players players, boolean hotseat) {
+        super(players, hotseat);
         super.rounds = 1;
         super.cards = 2;
     }

@@ -1,5 +1,7 @@
 package dev.lisek.crazybytes.game;
 
+import java.util.ArrayList;
+
 import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.entity.Card;
 import dev.lisek.crazybytes.entity.Player;
@@ -7,34 +9,73 @@ import dev.lisek.crazybytes.entity.Players;
 import dev.lisek.crazybytes.ui.Animation;
 import dev.lisek.crazybytes.ui.element.PostGame;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+
+class Modifiers extends ArrayList {
+
+    ToggleGroup mode = new ToggleGroup();
+
+    RadioButton classic = new RadioButton("Classic");
+    RadioButton single = new RadioButton("First to shed");
+    RadioButton countdown = new RadioButton("Countdown");
+
+    CheckBox quickdraw = new CheckBox("Quickdraw");
+    CheckBox queenSkip = new CheckBox("Queen skip");
+    CheckBox aceReverse = new CheckBox("Ace reverse");
+    CheckBox exchange7 = new CheckBox("7 exchange");
+    CheckBox draw2 = new CheckBox("Draw 2");
+    CheckBox draw4 = new CheckBox("Draw 4");
+
+    public Modifiers() {
+        classic.setToggleGroup(mode);
+        single.setToggleGroup(mode);
+        countdown.setToggleGroup(mode);
+        classic.setSelected(true);
+
+        // this.addAll(classic, single, countdown, quickdraw, queenSkip, aceReverse, exchange7, draw2, draw4);
+        this.add(classic);
+        this.add(single);
+        this.add(countdown);
+
+        this.add(quickdraw);
+        this.add(queenSkip);
+        this.add(aceReverse);
+        this.add(exchange7);
+        this.add(draw2);
+        this.add(draw4);
+    }
+}
 
 public class CrazyEights extends Game {
 
     class Ruleset {
         final static boolean checkValid(Card deck, Card player) {
+            int special = 8;
+            if (modifiers.countdown.isSelected()) {
+                special = App.game.players.current().points;
+            }
             return (
-                (player.getRank() == 8) ||
+                (player.getRank() == special) ||
                 (player.getRank() == deck.getRank()) ||
                 player.getSuit().equals(deck.getSuit())
             );
         }
     }
 
-    public static CheckBox[] modifiers = new CheckBox[] {
-        new CheckBox("No points"),
-        new CheckBox("Countdown"),
-        new CheckBox("Quickdraw"),
-        new CheckBox("Queen skip"),
-        new CheckBox("Ace reverse"),
-        new CheckBox("7 exchange"),
-        new CheckBox("Draw 2"),
-        new CheckBox("Draw 4"),
-    };
+    public static Modifiers modifiers = new Modifiers();
 
-    public CrazyEights(Players players, boolean local) {
-        super(players, local);
+    public CrazyEights(Players players, boolean hotseat) {
+        super(players, hotseat);
         super.rounds = 0;
         super.cards = 5;
+        
+        if (modifiers.countdown.isSelected()) {
+            for (Player player : players.players) {
+                if (player.points == 0)
+                    player.addPoints(8);
+            }
+        }
     }
 
     /**
@@ -109,8 +150,12 @@ public class CrazyEights extends Game {
             for (int i = 0; i < this.players.length; i++) {
                 this.players.next().displayHand();
             }
-            System.out.println(" wins %d points!".formatted(this.players.current().collectPayment()));
-            if (this.players.current().getPoints() >= 50 * this.players.length) {
+            if (modifiers.countdown.isSelected()) {
+                System.out.println(" wins! Special card: " + this.players.current().addPoints(-1));
+            } else {
+                System.out.println(" wins %d points!".formatted(this.players.current().collectPayment()));
+            }
+            if (modifiers.single.isSelected() || (modifiers.countdown.isSelected() && this.players.current().getPoints() == 0) || this.players.current().getPoints() >= 50 * this.players.length) {
                 System.out.println("Game over!");
                 App.game.layout.getChildren().add(new PostGame(this.players.current().profile));
             } else {

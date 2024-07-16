@@ -45,7 +45,7 @@ public class Players {
         System.out.print(this.current().name.getText());
         if (!App.game.checkWin()) {
             this.current().name.setStyle("-fx-font-weight: normal;");
-            if (App.game.local)
+            if (App.game.hotseat)
                 this.current().displayHand(false);
             Animation.nonBlockingSleep(500, () -> {
                 this.next().takeControl();

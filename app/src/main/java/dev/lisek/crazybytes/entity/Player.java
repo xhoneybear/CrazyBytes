@@ -40,7 +40,7 @@ public class Player implements CrazyEightsPlayer {
     /**
      * Player's points.
      */
-    private int points = 0;
+    public int points = 0;
 
     private Text point = new Text("(%d)".formatted(this.points));
     /**
@@ -106,7 +106,7 @@ public class Player implements CrazyEightsPlayer {
     @Override
     public void drawCard(Card card) {
         hand.add(card);
-        if (!App.game.local && !App.game.players.current().AI)
+        if (!App.game.hotseat && !App.game.players.current().AI)
             Animation.flip(card);
         card.setHandler(true);
         System.out.println("Added card: " + card);
@@ -236,5 +236,10 @@ public class Player implements CrazyEightsPlayer {
         this.points += payment;
         this.point.setText("(%d)".formatted(this.points));
         return payment;
+    }
+    public int addPoints(int points) {
+        this.points += points;
+        this.point.setText("(%d)".formatted(this.points));
+        return this.points;
     }
 }
