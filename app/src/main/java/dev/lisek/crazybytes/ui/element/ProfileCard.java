@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -44,32 +45,6 @@ public class ProfileCard extends HBox {
         this.name.setStyle("-fx-font-weight: bold; -fx-font-size: 18px;");
         this.name.setFill(Color.WHITE);
 
-        TextField nameField = new TextField(profile.name);
-        nameField.setMouseTransparent(true);
-        nameField.setOpacity(0);
-        nameField.setOnKeyPressed(eh -> {
-            if (eh.getCode() == KeyCode.ENTER) {
-                this.profile.update("name", nameField.getText());
-                nameField.setMouseTransparent(true);
-                nameField.setOpacity(0);
-                this.name.requestFocus();
-            }
-        });
-        ImageView editName = new ImageView(new Image(Config.DIR + "icons/edit.png", 16, 16, true, true));
-        editName.setTranslateY(4);
-        editName.setOpacity(0);
-        editName.setCursor(Cursor.HAND);
-        editName.setOnMouseClicked(eh -> {
-            nameField.setMouseTransparent(false);
-            nameField.setOpacity(1);
-            nameField.requestFocus();
-        });
-        HBox nameEditable = new HBox(this.name, editName);
-        StackPane nameBox = new StackPane(nameEditable, nameField);
-        nameEditable.setSpacing(8);
-        nameBox.setOnMouseEntered(eh -> editName.setOpacity(1));
-        nameBox.setOnMouseExited(eh -> editName.setOpacity(0));
-
         this.image = new ImageView(new Image(profile.avatar, 96, 96, true, true));
         this.image.setX(12);
         this.image.setY(12);
@@ -78,27 +53,60 @@ public class ProfileCard extends HBox {
         base.setX(12);
         base.setY(12);
 
-        ImageView editImg = new ImageView(new Image(Config.DIR + "icons/edit.png", 48, 48, true, true));
-        editImg.setX(24);
-        editImg.setY(24);
-        Group edit = new Group(new Rectangle(96, 96), editImg);
-        edit.setTranslateX(12);
-        edit.setTranslateY(12);
-        edit.setOpacity(0);
-        edit.setCursor(Cursor.HAND);
-        edit.setOnMouseClicked(eh -> this.profile.update("avatar", "file://" + new FileChooser().showOpenDialog(App.stage).getAbsolutePath()));
+        Node nameBox;
 
-        this.avatar = new Group(base, this.image, edit, this.border);
-        this.avatar.setOnMouseEntered(eh -> edit.setOpacity(0.5));
-        this.avatar.setOnMouseExited(eh -> edit.setOpacity(0));
+        if (editable) {
+            TextField nameField = new TextField(profile.name);
+            nameField.setMouseTransparent(true);
+            nameField.setOpacity(0);
+            nameField.setOnKeyPressed(eh -> {
+                if (eh.getCode() == KeyCode.ENTER) {
+                    this.profile.update("name", nameField.getText());
+                    nameField.setMouseTransparent(true);
+                    nameField.setOpacity(0);
+                    this.name.requestFocus();
+                }
+            });
+            ImageView editName = new ImageView(new Image(Config.DIR + "icons/edit.png", 16, 16, true, true));
+            editName.setTranslateY(4);
+            editName.setOpacity(0);
+            editName.setCursor(Cursor.HAND);
+            editName.setOnMouseClicked(eh -> {
+                nameField.setMouseTransparent(false);
+                nameField.setOpacity(1);
+                nameField.requestFocus();
+            });
+            HBox nameEditable = new HBox(this.name, editName);
+            nameEditable.setSpacing(8);
+            nameBox = new StackPane(nameEditable, nameField);
+            nameBox.setOnMouseEntered(eh -> editName.setOpacity(1));
+            nameBox.setOnMouseExited(eh -> editName.setOpacity(0));
+
+            ImageView editImg = new ImageView(new Image(Config.DIR + "icons/edit.png", 48, 48, true, true));
+            editImg.setX(24);
+            editImg.setY(24);
+            Group edit = new Group(new Rectangle(96, 96), editImg);
+            edit.setTranslateX(12);
+            edit.setTranslateY(12);
+            edit.setOpacity(0);
+            edit.setCursor(Cursor.HAND);
+            edit.setOnMouseClicked(eh -> this.profile.update("avatar", "file:" + new FileChooser().showOpenDialog(App.stage).getAbsolutePath()));
+
+            this.avatar = new Group(base, this.image, edit, this.border);
+            this.avatar.setOnMouseEntered(eh -> edit.setOpacity(0.5));
+            this.avatar.setOnMouseExited(eh -> edit.setOpacity(0));
+        } else {
+            this.avatar = new Group(base, this.image, this.border);
+            nameBox = this.name;
+        }
 
         this.exp = new Text("" + profile.exp);
-        this.lvl = new Text(Integer.toString(profile.exp/100));
+        this.lvl = new Text(Integer.toString(profile.exp/1000));
         this.lvl.setStyle("-fx-font-weight: bold;");
         this.games = new Text("" + profile.games);
         this.wins = new Text("" + profile.wins);
 
-        this.expBar = new Bar(2 * (profile.exp % 100), 10);
+        this.expBar = new Bar(2 * (profile.exp % 1000) / 10, 10);
         Group bar = new Group(new Bar(200, 10), this.expBar);
 
         HBox xpLvl = new HBox(bar, this.lvl);
@@ -128,6 +136,13 @@ public class ProfileCard extends HBox {
         this.setPadding(new Insets(16));
         this.setSpacing(4);
     }
+    public ProfileCard(Profile profile) {
+        this(profile, false);
+    }
+
+    public ProfileCard getEditableClone() {
+        return new ProfileCard(this.profile, true);
+    }
 
     public void update(String key, String value) {
         switch (key) {
@@ -141,8 +156,5 @@ public class ProfileCard extends HBox {
             case "games" -> this.games.setText(Integer.toString(profile.games));
             case "wins" -> this.wins.setText(Integer.toString(profile.wins));
         }
-    }
-    public ProfileCard(Profile profile) {
-        this(profile, false);
     }
 }
