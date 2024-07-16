@@ -81,7 +81,7 @@ public class Menu extends Scene {
         d2.setRotate(10);
         Rectangle buffer = new Rectangle(580, 0);
         MenuButton p = new MenuButton(0, "Play", "#80ff80");
-        p.setOnMouseClicked(eh -> App.stage.setScene(new LocalGame()));
+        p.setOnMouseClicked(eh -> App.stage.setScene(new Connect()));
         MenuButton g = new MenuButton(1, "Profile", "8080ff");
         MenuButton s = new MenuButton(2, "Settings", "ff80ff");
         MenuButton e = new MenuButton(3, "Exit", "ff8080");
