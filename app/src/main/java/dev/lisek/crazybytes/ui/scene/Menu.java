@@ -66,8 +66,7 @@ public class Menu extends Scene {
         HBox buff = new Profile().card;
         buff.setOpacity(0);
         top.setLeft(buff);
-        HBox card = profile.card;
-        top.setRight(card);
+        top.setRight(profile.card.getEditableClone());
         layout.setTop(top);
 
         ImageView c1 = new ImageView(new Image(Config.CARDS + "deck.png", 280, 440, true, true));
@@ -81,11 +80,11 @@ public class Menu extends Scene {
         StackPane d2 = new StackPane(r2, c2);
         d2.setRotate(10);
         Rectangle buffer = new Rectangle(580, 0);
-        StackPane p = new MenuButton(0, "Play", "#80ff80");
-        p.setOnMouseClicked(eh -> App.stage.setScene(App.local));
-        StackPane g = new MenuButton(1, "Profile", "8080ff");
-        StackPane s = new MenuButton(2, "Settings", "ff80ff");
-        StackPane e = new MenuButton(3, "Exit", "ff8080");
+        MenuButton p = new MenuButton(0, "Play", "#80ff80");
+        p.setOnMouseClicked(eh -> App.stage.setScene(new LocalGame()));
+        MenuButton g = new MenuButton(1, "Profile", "8080ff");
+        MenuButton s = new MenuButton(2, "Settings", "ff80ff");
+        MenuButton e = new MenuButton(3, "Exit", "ff8080");
         e.setOnMouseClicked(eh -> System.exit(0));
         Group center = new Group(buffer, p, g, s, e, d1, d2);
         center.setTranslateX(80);
