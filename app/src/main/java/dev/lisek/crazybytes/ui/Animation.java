@@ -1,8 +1,7 @@
 package dev.lisek.crazybytes.ui;
 
-import dev.lisek.crazybytes.entity.Card;
 import dev.lisek.crazybytes.config.Config;
-
+import dev.lisek.crazybytes.entity.Card;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.concurrent.Task;
@@ -10,22 +9,23 @@ import javafx.util.Duration;
 
 public class Animation {
 
+    private Animation() {}
+
     /**
      * Asynchronous sleep for animation purposes.
      * @param delay The amount of time to sleep (in ms).
      * @param continuation The continuation to run after the sleep.
      */
     public static void nonBlockingSleep(long delay, Runnable continuation) {
-      Task<Void> sleeper = new Task<Void>() {
-          @Override
-          protected Void call() throws Exception {
-              try { Thread.sleep(delay); }
-              catch (InterruptedException e) { }
-              return null;
-          }
-      };
-      sleeper.setOnSucceeded(event -> continuation.run());
-      new Thread(sleeper).start();
+        Task<Void> sleeper = new Task<>() {
+            @Override
+            protected Void call() throws InterruptedException {
+                Thread.sleep(delay);
+                return null;
+            }
+        };
+        sleeper.setOnSucceeded(event -> continuation.run());
+        new Thread(sleeper).start();
     }
 
     /**

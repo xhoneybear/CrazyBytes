@@ -2,14 +2,15 @@ package dev.lisek.crazybytes.ui.scene;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.List;
 
 import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.config.Config;
 import dev.lisek.crazybytes.server.Client;
 import dev.lisek.crazybytes.server.Server;
-import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -69,5 +70,7 @@ public class OnlineGame extends GamePrep {
     }
 
     @Override
-    void startGame(Constructor<?> constructor, ObservableList playerList) {}
+    void startGame(Constructor<?> constructor, List<Node> playerList) {
+        // TODO: implement
+    }
 }

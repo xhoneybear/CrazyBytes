@@ -9,7 +9,7 @@ import javafx.util.Pair;
  */
 
 public class Players {
-    public final Player[] players;
+    public final Player[] list;
     public final int length;
     public int offset = 0;
     public int plays = 0;
@@ -17,10 +17,10 @@ public class Players {
 
     public Players(int offset, Pair<String, Boolean> ... players) {
         this.length = players.length;
-        this.players = new Player[this.length];
+        this.list = new Player[this.length];
         this.offset = offset;
         for (int i = 0; i < this.length; i++) {
-            this.players[i] = new Player(players[i].getKey(), pos(i), this.length, players[i].getValue());
+            this.list[i] = new Player(players[i].getKey(), pos(i), this.length, players[i].getValue());
         }
         this.current = this.length - 1;
     }
@@ -33,11 +33,12 @@ public class Players {
     }
 
     public Player current() {
-        return players[current];
+        return list[current];
     }
 
     public Player next() {
-        return players[current = ++current % players.length];
+        current = ++current % list.length;
+        return current();
     }
 
     public void handControl() {
@@ -58,7 +59,7 @@ public class Players {
 
     public Players retain() {
         this.plays = 0;
-        for (Player player : players) {
+        for (Player player : list) {
             player.flushHand();
         }
         return this;

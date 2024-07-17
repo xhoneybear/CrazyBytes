@@ -1,6 +1,7 @@
 package dev.lisek.crazybytes.game;
 
 import dev.lisek.crazybytes.App;
+import dev.lisek.crazybytes.config.Config;
 import dev.lisek.crazybytes.entity.Card;
 import dev.lisek.crazybytes.entity.CardPile;
 import dev.lisek.crazybytes.entity.Player;
@@ -11,7 +12,9 @@ import dev.lisek.crazybytes.ui.element.PostGame;
 public class Blackjack extends Game {
 
     class Ruleset {
-        final static int getScore(CardPile hand) {
+        private Ruleset() {}
+
+        static final int getScore(CardPile hand) {
             int score = 0;
             boolean ace = false;
             for (Card card : hand.cards) {
@@ -24,7 +27,7 @@ public class Blackjack extends Game {
             return score <= 21 ? score : 0;
         }
 
-        final static boolean checkValid(CardPile hand) {
+        static final boolean checkValid(CardPile hand) {
             return getScore(hand) > 0;
         }
     }
@@ -76,14 +79,14 @@ public class Blackjack extends Game {
         deck.cards.get(0).setHandler(false);
         if (!Ruleset.checkValid(App.game.players.current().getHand())) {
             System.out.println(App.game.players.current().name.getText() + " busted!");
-            if (!this.players.current().AI)
+            if (!this.players.current().bot)
                 App.game.players.handControl();
         }
     }
 
     @Override
     public void computerMove(Player player) {
-        Animation.nonBlockingSleep((int)(Math.random() * 1000), () -> {
+        Animation.nonBlockingSleep(Config.random.nextInt(1000), () -> {
             if (Ruleset.getScore(player.getHand()) != 0 && Ruleset.getScore(player.getHand()) + Math.random() * 5 < 20) {
                 draw(App.game.deck.cards.get(0));
                 player.takeControl();
@@ -97,13 +100,13 @@ public class Blackjack extends Game {
     public boolean checkWin() {
         if (this.players.plays > App.game.rounds * this.players.length) {
             Player winner = this.players.current();
-            for (Player player : this.players.players) {
+            for (Player player : this.players.list) {
                 player.displayHand();
                 if (Ruleset.getScore(player.getHand()) > Ruleset.getScore(winner.getHand()))
                     winner = player;
             }
             System.out.println(winner.name.getText() + " wins!");
-            App.game.layout.getChildren().add(new PostGame(winner.profile));
+            Game.layout.getChildren().add(new PostGame(winner.profile));
             return true;
         }
         return false;

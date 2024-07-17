@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BotNames {
-    private final static ArrayList<String> names = new ArrayList(List.of(
+    private BotNames() {}
+
+    private static final ArrayList<String> names = new ArrayList<>(List.of(
         "Andrew",
         "Boris",
         "Celine",
@@ -33,15 +35,11 @@ public class BotNames {
         "Zach"
     ));
 
-    // public BotNames() {
-    //     Collections.shuffle(this.names);
-    // }
-
     public static String getName(int i) {
         return names.get(i);
     }
 
     public static String random() {
-        return getName((int) (Math.random() * names.size()));
+        return getName(Config.random.nextInt(names.size()));
     }
 }

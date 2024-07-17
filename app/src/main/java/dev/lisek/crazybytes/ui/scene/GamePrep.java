@@ -4,15 +4,13 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 
 import dev.lisek.crazybytes.config.Config;
-
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
-
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
@@ -63,7 +61,7 @@ public abstract class GamePrep extends Scene {
     Button back = new Button("Back");
     Button play = new Button();
 
-    public GamePrep() {
+    GamePrep() {
         super(layout = new StackPane(), 1600, 1000);
         this.getStylesheets().add("style.css");
 
@@ -83,7 +81,6 @@ public abstract class GamePrep extends Scene {
             .scan()) {
             ClassInfoList widgetClasses = scanResult.getSubclasses("dev.lisek.crazybytes.game.Game");
             List<Class<?>> widgetClassNames = widgetClasses.loadClasses();
-            int idx = 0;
             for (Class<?> c : widgetClassNames) {
                 RadioButton btn = new RadioButton(c.getSimpleName());
                 toggles.getChildren().add(btn);
@@ -93,7 +90,7 @@ public abstract class GamePrep extends Scene {
                         if (!modifiers.getChildren().isEmpty())
                             modifiers.getChildren().clear();
                         try {
-                            modifiers.getChildren().addAll((List) c.getField("modifiers").get(null));
+                            modifiers.getChildren().addAll((List<Node>) c.getField("modifiers").get(null));
                         } catch (NoSuchFieldException | IllegalAccessException e) {
                             System.err.println("WARNING: modifiers for %s don't seem to exist".formatted(c.getSimpleName()));
                         }
@@ -102,7 +99,6 @@ public abstract class GamePrep extends Scene {
                         );
                     }
                 );
-                idx++;
             }
         }
 
@@ -130,5 +126,5 @@ public abstract class GamePrep extends Scene {
         layout.getChildren().addAll(base);
     }
 
-    abstract void startGame(Constructor<?> constructor, ObservableList playerList);
+    abstract void startGame(Constructor<?> constructor, List<Node> playerList);
 }

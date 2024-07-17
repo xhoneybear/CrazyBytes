@@ -31,8 +31,13 @@ class Bar extends Rectangle {
 }
 
 public class ProfileCard extends HBox {
-    public final Text name, exp, lvl, games, wins;
-    public final ImageView image, border = new ImageView(new Image(Config.DIR + "border.png", 120, 120, true, true));
+    public final Text name;
+    public final Text exp;
+    public final Text lvl;
+    public final Text games;
+    public final Text wins;
+    public final ImageView image;
+    public final ImageView border = new ImageView(new Image(Config.DIR + "border.png", 120, 120, true, true));
     public final Group avatar;
     public final Rectangle expBar;
     public final VBox data;
@@ -155,6 +160,7 @@ public class ProfileCard extends HBox {
             }
             case "games" -> this.games.setText(Integer.toString(profile.games));
             case "wins" -> this.wins.setText(Integer.toString(profile.wins));
+            default -> System.err.println("Unknown key: " + key);
         }
     }
 }

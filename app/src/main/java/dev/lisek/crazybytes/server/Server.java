@@ -4,23 +4,23 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.List;
 
 import dev.lisek.crazybytes.App;
+import dev.lisek.crazybytes.config.Config;
 
 class ClientHandler extends Thread {
 
     private final Socket client;
-    private final ArrayList<ClientHandler> clients;
+    private final List<ClientHandler> clients;
     private final BufferedReader in;
     private final PrintWriter out;
 
-    public ClientHandler(Socket client, ArrayList<ClientHandler> clients) throws IOException {
+    public ClientHandler(Socket client, List<ClientHandler> clients) throws IOException {
         this.client = client;
         this.clients = clients;
         this.in = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -68,15 +68,15 @@ class ClientHandler extends Thread {
 
 public class Server extends Thread {
 
-    private final ArrayList<ClientHandler> clients = new ArrayList();
-    private final ServerSocket server;
+    private final List<ClientHandler> clients = new ArrayList<>();
+    private final ServerSocket socket;
     public final int port;
 
     public Server() {
-        this.port = (int) (Math.random() * (Math.pow(2, 16) - 1024)) + 1024;
+        this.port = (int) (Config.random.nextInt((int) Math.pow(2, 16) - 1024)) + 1024;
         System.out.println("Starting server on port " + port);
         try {
-            server = new ServerSocket(port);
+            socket = new ServerSocket(port);
             System.out.println("Server successfully started");
             App.stage.setOnCloseRequest(eh -> this.close());
         } catch (IOException e) {
@@ -88,17 +88,17 @@ public class Server extends Thread {
     @Override
     public void run() {
         try {
-            start(port);
+            startServer();
         } catch (IOException e) {
             System.out.println("Server closed");
         }
     }
 
-    public final void start(int port) throws IOException {
+    public final void startServer() throws IOException {
         Socket client;
         ClientHandler handler;
-        while (!server.isClosed()) {
-            client = server.accept();
+        while (!socket.isClosed()) {
+            client = socket.accept();
             handler = new ClientHandler(client, clients);
             clients.add(handler);
             handler.start();
@@ -122,7 +122,7 @@ public class Server extends Thread {
             c.close();
         }
         try {
-            server.close();
+            socket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

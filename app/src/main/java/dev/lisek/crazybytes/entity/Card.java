@@ -21,27 +21,23 @@ public class Card extends Group {
     private final String suit;
     /** The rank of the card (1 - 13). */
     private final int rank;
-    /** The deck that the card belongs to. */
-    private final CardPile deck;
     /** Card face image. */
     public final Image img;
     /** ImageView representing the card. */
     public final ImageView view;
-    /** Card's orientation (true if face up) */
-    public boolean visible = false;
     /** Card's transition for use with flip animation. */
     public final ScaleTransition scale;
+    /** Card's orientation (true if face up) */
+    public boolean visible = false;
 
     /**
      * Constructor for the Card class.
      * @param suit The suit of the card.
      * @param rank The rank of the card.
-     * @param deck The deck that the card belongs to.
      */
-    public Card(String suit, int rank, CardPile deck) {
+    public Card(String suit, int rank) {
         this.suit = suit;
         this.rank = rank;
-        this.deck = deck;
         Rectangle rec = new Rectangle(125, 200);
         rec.setFill(Paint.valueOf(Config.color(this.suit, true)));
         rec.setX(5);
@@ -57,7 +53,7 @@ public class Card extends Group {
     }
 
     /**
-     * Sets the handler for the card.
+     * Sets the action handler for the card.
      * @param state The new handler state.
      * @see play()
      * @see draw()

@@ -1,6 +1,7 @@
 package dev.lisek.crazybytes.entity;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -8,7 +9,7 @@ import java.nio.file.Paths;
 import dev.lisek.crazybytes.config.Config;
 import dev.lisek.crazybytes.ui.element.ProfileCard;
 
-public class Profile {
+public class Profile implements Serializable {
     public String name;
     public String avatar;
     public int exp;
@@ -31,7 +32,7 @@ public class Profile {
     public static final Profile init(String data) {
         try {
             if (data == null) {
-                data = Files.readString(Paths.get(URI.create(Config.DIR + "account.json")));
+                data = Files.readString(Paths.get(URI.create(Config.ACCOUNT)));
             }
             Profile profile = Config.gson.fromJson(data, Profile.class);
             profile.card = new ProfileCard(profile);
@@ -39,7 +40,7 @@ public class Profile {
         } catch (IOException e) {
             try {
                 Profile profile = new Profile();
-                Files.writeString(Paths.get(URI.create(Config.DIR + "account.json")), Config.gson.toJson(profile));
+                Files.writeString(Paths.get(URI.create(Config.ACCOUNT)), Config.gson.toJson(profile));
                 return profile;
             } catch (IOException er) {
                 er.printStackTrace();
@@ -48,6 +49,7 @@ public class Profile {
         }
     }
     public static final Profile init() {
+        System.out.println(Config.ACCOUNT);
         return init(null);
     }
 
@@ -58,12 +60,13 @@ public class Profile {
             case "exp" -> this.exp += Integer.parseInt(value);
             case "games" -> this.games++;
             case "wins" -> this.wins++;
+            default -> System.err.println("Unknown key: " + key);
         }
         try {
-            Files.writeString(Paths.get(URI.create(Config.DIR + "account.json")), Config.gson.toJson(this));
+            Files.writeString(Paths.get(URI.create(Config.ACCOUNT)), Config.gson.toJson(this));
             this.card.update(key, value);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error while updating profile: " + e.getMessage());
         }
     }
     public void update(String key) {

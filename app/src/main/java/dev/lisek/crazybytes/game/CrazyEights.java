@@ -3,29 +3,31 @@ package dev.lisek.crazybytes.game;
 import java.util.ArrayList;
 
 import dev.lisek.crazybytes.App;
+import dev.lisek.crazybytes.config.Config;
 import dev.lisek.crazybytes.entity.Card;
 import dev.lisek.crazybytes.entity.Player;
 import dev.lisek.crazybytes.entity.Players;
 import dev.lisek.crazybytes.ui.Animation;
 import dev.lisek.crazybytes.ui.element.PostGame;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 
-class Modifiers extends ArrayList {
+class Modifiers extends ArrayList<Node> {
 
-    ToggleGroup mode = new ToggleGroup();
+    transient ToggleGroup mode = new ToggleGroup();
 
-    RadioButton classic = new RadioButton("Classic");
-    RadioButton single = new RadioButton("First to shed");
-    RadioButton countdown = new RadioButton("Countdown");
+    transient RadioButton classic = new RadioButton("Classic");
+    transient RadioButton single = new RadioButton("First to shed");
+    transient RadioButton countdown = new RadioButton("Countdown");
 
-    CheckBox quickdraw = new CheckBox("Quickdraw");
-    CheckBox queenSkip = new CheckBox("Queen skip");
-    CheckBox aceReverse = new CheckBox("Ace reverse");
-    CheckBox exchange7 = new CheckBox("7 exchange");
-    CheckBox draw2 = new CheckBox("Draw 2");
-    CheckBox draw4 = new CheckBox("Draw 4");
+    transient CheckBox quickdraw = new CheckBox("Quickdraw");
+    transient CheckBox queenSkip = new CheckBox("Queen skip");
+    transient CheckBox aceReverse = new CheckBox("Ace reverse");
+    transient CheckBox exchange7 = new CheckBox("7 exchange");
+    transient CheckBox draw2 = new CheckBox("Draw 2");
+    transient CheckBox draw4 = new CheckBox("Draw 4");
 
     public Modifiers() {
         classic.setToggleGroup(mode);
@@ -33,7 +35,6 @@ class Modifiers extends ArrayList {
         countdown.setToggleGroup(mode);
         classic.setSelected(true);
 
-        // this.addAll(classic, single, countdown, quickdraw, queenSkip, aceReverse, exchange7, draw2, draw4);
         this.add(classic);
         this.add(single);
         this.add(countdown);
@@ -50,7 +51,9 @@ class Modifiers extends ArrayList {
 public class CrazyEights extends Game {
 
     class Ruleset {
-        final static boolean checkValid(Card deck, Card player) {
+        private Ruleset() {}
+
+        static final boolean checkValid(Card deck, Card player) {
             int special = 8;
             if (modifiers.countdown.isSelected()) {
                 special = App.game.players.current().points;
@@ -63,7 +66,7 @@ public class CrazyEights extends Game {
         }
     }
 
-    public static Modifiers modifiers = new Modifiers();
+    public static final Modifiers modifiers = new Modifiers();
 
     public CrazyEights(Players players, boolean hotseat) {
         super(players, hotseat);
@@ -71,7 +74,7 @@ public class CrazyEights extends Game {
         super.cards = 5;
         
         if (modifiers.countdown.isSelected()) {
-            for (Player player : players.players) {
+            for (Player player : players.list) {
                 if (player.points == 0)
                     player.addPoints(8);
             }
@@ -129,10 +132,11 @@ public class CrazyEights extends Game {
 
     @Override
     public void computerMove(Player player) {
-        Animation.nonBlockingSleep((int)(Math.random() * 1000), () -> {
+        Animation.nonBlockingSleep(Config.random.nextInt(1000), () -> {
             boolean found = false;
             for (Card card : player.getHand().cards) {
-                if (found = play(card)) {
+                if (play(card)) {
+                    found = true;
                     Animation.flip(card);
                     break;
                 }
@@ -155,9 +159,13 @@ public class CrazyEights extends Game {
             } else {
                 System.out.println(" wins %d points!".formatted(this.players.current().collectPayment()));
             }
-            if (modifiers.single.isSelected() || (modifiers.countdown.isSelected() && this.players.current().getPoints() == 0) || this.players.current().getPoints() >= 50 * this.players.length) {
+            if (modifiers.single.isSelected() ||
+                (modifiers.countdown.isSelected() &&
+                this.players.current().getPoints() == 0) ||
+                this.players.current().getPoints() >= 50 * this.players.length
+            ) {
                 System.out.println("Game over!");
-                App.game.layout.getChildren().add(new PostGame(this.players.current().profile));
+                Game.layout.getChildren().add(new PostGame(this.players.current().profile));
             } else {
                 Animation.nonBlockingSleep(5000, () -> PostGame.replay());
             }

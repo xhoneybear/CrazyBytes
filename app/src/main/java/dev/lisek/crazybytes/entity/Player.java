@@ -12,7 +12,7 @@ import javafx.scene.text.Text;
  * Represents a player in the game.
  * A player has a hand of cards.
  */
-public class Player implements CrazyEightsPlayer {
+public class Player {
     /**
      * Player's name.
      */
@@ -34,15 +34,15 @@ public class Player implements CrazyEightsPlayer {
      */
     public final double[] position;
     /**
-     * Is the player controlled by AI.
+     * Is the player controlled by a computer.
      */
-    public final Boolean AI;
+    public final Boolean bot;
     /**
      * Player's points.
      */
     public int points = 0;
 
-    private Text point = new Text("(%d)".formatted(this.points));
+    private final Text point = new Text("(%d)".formatted(this.points));
     /**
      * Player's hand.
      */
@@ -54,15 +54,15 @@ public class Player implements CrazyEightsPlayer {
      * @param name  The player's name.
      * @param pos   The player's position on the table.
      * @param count The number of players in a game.
-     * @param AI    Is the player controlled by AI.
+     * @param bot   Is the player controlled by a computer.
      */
-    public Player(String name, int pos, int count, Boolean AI) {
+    public Player(String name, int pos, int count, Boolean bot) {
         long x = Math.round(600 * Math.sin(Math.toRadians(-360/count * pos)));
         long y = Math.round(300 * Math.cos(Math.toRadians(360/count * pos)));
         System.out.println(x + " " + y + " " + 360/count * pos);
         this.position = new double[]{x, y, 360/count * pos};
         this.name = new Text(name);
-        if (AI) {
+        if (bot) {
             this.avatar = new ImageView(Config.BOT);
         } else {
             this.avatar = new ImageView(Config.HUMAN);
@@ -77,7 +77,7 @@ public class Player implements CrazyEightsPlayer {
         this.label.setTranslateX(this.position[0] + this.position[0]/600 * 150);
         this.label.setTranslateY(this.position[1] + this.position[1]/300 * 150);
         this.label.setRotate((this.position[2] + 90) % 360 <= 180 ? this.position[2] : this.position[2] - 180);
-        this.AI = AI;
+        this.bot = bot;
     }
 
     /**
@@ -103,10 +103,9 @@ public class Player implements CrazyEightsPlayer {
      *
      * @param card The card to add.
      */
-    @Override
     public void drawCard(Card card) {
         hand.add(card);
-        if (!App.game.hotseat && !App.game.players.current().AI)
+        if (!App.game.hotseat && !App.game.players.current().bot)
             Animation.flip(card);
         card.setHandler(true);
         System.out.println("Added card: " + card);
@@ -158,7 +157,6 @@ public class Player implements CrazyEightsPlayer {
      *
      * @param card Index of the card to remove.
      */
-    @Override
     public void playCard(Card card) {
         System.out.println(card);
         System.out.println(hand.cards);
@@ -215,19 +213,17 @@ public class Player implements CrazyEightsPlayer {
      * If the player is human, it displays the player's hand.
      */
     public void takeControl() {
-        if (this.AI) {
+        if (this.bot) {
             App.game.computerMove(this);
         } else {
             this.displayHand();
         }
     }
 
-    @Override
     public void passTurn(int turn) {
         System.out.println("Player " + this.name + " passed turn " + turn);
     }
 
-    @Override
     public int collectPayment() {
         int payment = 0;
         for (int i = 0; i < App.game.players.length; i++) {

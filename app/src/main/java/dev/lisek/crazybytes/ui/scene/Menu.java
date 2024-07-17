@@ -43,17 +43,17 @@ class MenuButton extends StackPane {
         hb.setSpacing(32);
         hb.setPadding(new Insets(0, 42, 0, 0));
         this.getChildren().addAll(rec, hb);
-        this.setTranslateX(147 - 19 * i);
-        this.setTranslateY(30 + 107 * i);
+        this.setTranslateX((double) 147 - 19 * i);
+        this.setTranslateY((double) 30 + 107 * i);
         this.setCursor(Cursor.HAND);
-        this.setOnMouseEntered(eh -> this.setTranslateX(297 - 19 * i));
-        this.setOnMouseExited(eh -> this.setTranslateX(147 - 19 * i));
+        this.setOnMouseEntered(eh -> this.setTranslateX((double) 297 - 19 * i));
+        this.setOnMouseExited(eh -> this.setTranslateX((double) 147 - 19 * i));
     }
 }
 
 public class Menu extends Scene {
 
-    private final static BorderPane layout = new BorderPane();
+    private static final BorderPane layout = new BorderPane();
 
     public Menu(Profile profile) {
         super(layout, 1600, 1000);

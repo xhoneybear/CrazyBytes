@@ -29,7 +29,7 @@ public class CardPile {
 
         for(String suit: suits){
             for(int rank = 1; rank <= 13; rank++){
-                cards.add(new Card(suit, rank, this));
+                cards.add(new Card(suit, rank));
             }
         }
         shuffle();

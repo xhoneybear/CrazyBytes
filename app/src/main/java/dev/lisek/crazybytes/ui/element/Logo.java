@@ -11,10 +11,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 public class Logo extends Group {
-    private final static ImageView c8 = new ImageView(new Image(Config.DIR + "logo.png", 591, 321, true, true));
-    private final static Rectangle rec = new Rectangle(551, 281);
-    private final static Text subtitle = new Text("The pixel-perfect card shedding game!");
-    private final static PerspectiveTransform pt = new PerspectiveTransform();
+    private static final ImageView c8 = new ImageView(new Image(Config.DIR + "logo.png", 591, 321, true, true));
+    private static final Rectangle rec = new Rectangle(551, 281);
+    private static final Text subtitle = new Text("The pixel-perfect card shedding game!");
+    private static final PerspectiveTransform pt = new PerspectiveTransform();
 
     public Logo() {
         super(rec, c8, subtitle);

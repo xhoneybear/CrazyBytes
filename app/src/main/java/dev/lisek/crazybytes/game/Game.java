@@ -41,7 +41,7 @@ public abstract class Game extends Scene {
     public int rounds;
     int cards;
 
-    public Game(Players players, boolean hotseat) {
+    Game(Players players, boolean hotseat) {
         super(layout = new StackPane(), 1600, 1000);
         this.getStylesheets().add("style.css");
 
@@ -56,12 +56,12 @@ public abstract class Game extends Scene {
         menu.setOnAction(eh -> layout.getChildren().add(new GameMenu(layout)));
 
         layout.getChildren().addAll(board, menu);
-        layout.setAlignment(menu, Pos.TOP_LEFT);
+        StackPane.setAlignment(menu, Pos.TOP_LEFT);
 
         for (int i = 51; i >= 0; i--) {
             board.getChildren().add(deck.cards.get(i));
         }
-        for (Player player : players.players) {
+        for (Player player : players.list) {
             board.getChildren().add(player.label);
         }
     }

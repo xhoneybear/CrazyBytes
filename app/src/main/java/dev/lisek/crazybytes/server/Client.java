@@ -7,14 +7,14 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Client {
-    private Socket client;
-    private BufferedReader in;
-    private PrintWriter out;
+    private final Socket socket;
+    private final BufferedReader in;
+    private final PrintWriter out;
 
     public Client(String ip, int port) throws IOException {
-        client = new Socket(ip, port);
-        in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-        out = new PrintWriter(client.getOutputStream(), true);
+        socket = new Socket(ip, port);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new PrintWriter(socket.getOutputStream(), true);
         System.out.println("Connected to " + ip + ":" + port);
     }
 
@@ -22,7 +22,7 @@ public class Client {
         try {
             in.close();
             out.close();
-            client.close();
+            socket.close();
             System.out.println("Connection closed");
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -50,7 +50,5 @@ public class Client {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        // client.send("quit");
-        // client.close();
     }
 }

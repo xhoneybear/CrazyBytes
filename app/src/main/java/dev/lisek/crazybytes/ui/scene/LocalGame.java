@@ -2,15 +2,16 @@ package dev.lisek.crazybytes.ui.scene;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.config.BotNames;
 import dev.lisek.crazybytes.config.Config;
 import dev.lisek.crazybytes.entity.Players;
 import dev.lisek.crazybytes.game.Game;
-import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -72,20 +73,20 @@ public class LocalGame extends GamePrep {
     }
 
     @Override
-    void startGame(Constructor<?> constructor, ObservableList playerList) {
+    void startGame(Constructor<?> constructor, List<Node> playerList) {
         Pair<String, Boolean>[] pairs = new Pair[playerList.size()];
         String name;
-        boolean human,
-                hotseat = true;
-        int idx = 0,
-            humans = 0,
-            offset = 0;
+        boolean human;
+        boolean hotseat = true;
+        int idx = 0;
+        int humans = 0;
+        int offset = 0;
         LocalPlayerEntry entry;
         for (int i = 0; i < playerList.size(); i++) {
             entry = (LocalPlayerEntry) playerList.get(i);
             name = entry.name.getText();
             human = entry.human.isSelected();
-            pairs[i] = new Pair(name, !human);
+            pairs[i] = new Pair<>(name, !human);
             if (human) {
                 idx = i;
                 humans += 1;
