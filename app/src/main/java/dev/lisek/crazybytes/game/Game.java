@@ -1,14 +1,18 @@
 package dev.lisek.crazybytes.game;
 
 import dev.lisek.crazybytes.App;
+import dev.lisek.crazybytes.config.Config;
 import dev.lisek.crazybytes.entity.Card;
 import dev.lisek.crazybytes.entity.CardPile;
 import dev.lisek.crazybytes.entity.Player;
 import dev.lisek.crazybytes.entity.Players;
 import dev.lisek.crazybytes.ui.Animation;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -50,10 +54,11 @@ public abstract class Game extends Scene {
 
         StackPane board = new StackPane();
 
-        Button menu = new Button("=");
+        ImageView menu = new ImageView(new Image(Config.DIR + "icons/menu.png"));
         menu.setTranslateX(8);
         menu.setTranslateY(8);
-        menu.setOnAction(eh -> layout.getChildren().add(new GameMenu(layout)));
+        menu.setCursor(Cursor.HAND);
+        menu.setOnMouseClicked(eh -> layout.getChildren().add(new GameMenu(layout)));
 
         layout.getChildren().addAll(board, menu);
         StackPane.setAlignment(menu, Pos.TOP_LEFT);

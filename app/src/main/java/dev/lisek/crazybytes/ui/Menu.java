@@ -1,9 +1,8 @@
-package dev.lisek.crazybytes.ui.scene;
+package dev.lisek.crazybytes.ui;
 
 import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.config.Config;
 import dev.lisek.crazybytes.entity.Profile;
-import dev.lisek.crazybytes.ui.element.Logo;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -15,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -51,6 +51,36 @@ class MenuButton extends StackPane {
     }
 }
 
+class Logo extends Group {
+    private static final ImageView c8 = new ImageView(new Image(Config.DIR + "logo.png", 591, 321, true, true));
+    private static final Rectangle rec = new Rectangle(551, 281);
+    private static final Text subtitle = new Text("The pixel-perfect card shedding game!");
+    private static final PerspectiveTransform pt = new PerspectiveTransform();
+
+    public Logo() {
+        super(rec, c8, subtitle);
+
+        rec.setFill(Paint.valueOf(Color.BLACK.toString()));
+        rec.setX(20);
+        rec.setY(20);
+
+        subtitle.setStyle("-fx-font-weight: bold; -fx-font-size: 18px;");
+        subtitle.setX(100);
+        subtitle.setY(361);
+
+        pt.setUlx(60);
+        pt.setUly(60);
+        pt.setUrx(546);
+        pt.setLly(291);
+        pt.setLrx(591);
+        pt.setLry(321);
+
+        this.setEffect(pt);
+        this.setCache(true);
+    }
+}
+
+
 public class Menu extends Scene {
 
     private static final BorderPane layout = new BorderPane();
@@ -66,7 +96,7 @@ public class Menu extends Scene {
         HBox buff = new Profile().card;
         buff.setOpacity(0);
         top.setLeft(buff);
-        top.setRight(profile.card.getEditableClone());
+        top.setRight(profile.editableCard());
         layout.setTop(top);
 
         ImageView c1 = new ImageView(new Image(Config.CARDS + "deck.png", 280, 440, true, true));

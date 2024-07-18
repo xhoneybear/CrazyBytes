@@ -40,7 +40,6 @@ class ClientHandler extends Thread {
                     break;
                 }
                 notifyAll(message);
-                out.println("I got you!");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

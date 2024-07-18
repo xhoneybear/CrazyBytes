@@ -1,6 +1,7 @@
 package dev.lisek.crazybytes.game;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.config.Config;
@@ -8,7 +9,6 @@ import dev.lisek.crazybytes.entity.Card;
 import dev.lisek.crazybytes.entity.Player;
 import dev.lisek.crazybytes.entity.Players;
 import dev.lisek.crazybytes.ui.Animation;
-import dev.lisek.crazybytes.ui.element.PostGame;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
@@ -35,16 +35,20 @@ class Modifiers extends ArrayList<Node> {
         countdown.setToggleGroup(mode);
         classic.setSelected(true);
 
-        this.add(classic);
-        this.add(single);
-        this.add(countdown);
+        this.addAll(List.of(
+            classic, single, countdown,
+            quickdraw, queenSkip, aceReverse, exchange7, draw2, draw4
+        ));
+    }
 
-        this.add(quickdraw);
-        this.add(queenSkip);
-        this.add(aceReverse);
-        this.add(exchange7);
-        this.add(draw2);
-        this.add(draw4);
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Modifiers);
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
     }
 }
 

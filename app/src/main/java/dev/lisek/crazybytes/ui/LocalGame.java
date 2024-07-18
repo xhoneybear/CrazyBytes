@@ -1,4 +1,4 @@
-package dev.lisek.crazybytes.ui.scene;
+package dev.lisek.crazybytes.ui;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

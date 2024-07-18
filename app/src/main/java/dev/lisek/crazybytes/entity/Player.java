@@ -57,27 +57,27 @@ public class Player {
      * @param bot   Is the player controlled by a computer.
      */
     public Player(String name, int pos, int count, Boolean bot) {
-        long x = Math.round(600 * Math.sin(Math.toRadians(-360/count * pos)));
-        long y = Math.round(300 * Math.cos(Math.toRadians(360/count * pos)));
+        long x = Math.round(600 * Math.sin(Math.toRadians(-360./count * pos)));
+        long y = Math.round(300 * Math.cos(Math.toRadians(360./count * pos)));
         System.out.println(x + " " + y + " " + 360/count * pos);
         this.position = new double[]{x, y, 360/count * pos};
         this.name = new Text(name);
-        if (bot) {
+        this.bot = bot;
+        if (this.bot) {
             this.avatar = new ImageView(Config.BOT);
         } else {
             this.avatar = new ImageView(Config.HUMAN);
         }
         this.avatar.setFitHeight(24);
         this.avatar.setFitWidth(24);
-        this.profile = new Profile(this.name.getText(), this.avatar.getImage().getUrl(), 0, 0, 0);
+        this.profile = new Profile();
         this.label = new HBox(this.avatar, this.name, this.point);
         this.label.setMouseTransparent(true);
         this.label.setAlignment(Pos.CENTER);
         this.label.setSpacing(8);
-        this.label.setTranslateX(this.position[0] + this.position[0]/600 * 150);
-        this.label.setTranslateY(this.position[1] + this.position[1]/300 * 150);
+        this.label.setTranslateX(1.25 * this.position[0]);
+        this.label.setTranslateY(1.5 * this.position[1]);
         this.label.setRotate((this.position[2] + 90) % 360 <= 180 ? this.position[2] : this.position[2] - 180);
-        this.bot = bot;
     }
 
     /**
@@ -120,16 +120,18 @@ public class Player {
      * @param i     The index of the card.
      */
     private double shift(int mod, int i) {
-        return Math.round(50 * mod * this.position[i]/((2 - i) * Math.sqrt(Math.pow(this.position[0], 2) + Math.pow(this.position[1], 2))));
+        return 50 * mod * this.position[i]/((2 - i) * Math.sqrt(Math.pow(this.position[0], 2) + Math.pow(this.position[1], 2)));
     }
 
     /**
      * Shifts a card vertically in the player's hand.
-     * Causes the cards to make an angle.
+     * Causes the cards to make an arch.
      * @param mod   The shift amount.
      * @param i     The index of the card.
      */
     private double ang(int mod, int i) {
+        //! It's binary, and it shouldn't be. Only works well for 2, 4 and 8.
+        //! Will try to change it to a polar coordinate function.
         return Math.pow(Math.abs(mod), 2.4) * Math.signum(this.position[i]);
     }
 
@@ -194,7 +196,7 @@ public class Player {
     public int countHand() {
         int pts = 0;
         for (Card card : hand.cards) {
-            pts += card.getRank() > 10 ? 10 : card.getRank() == 8 ? 50 : card.getRank();
+            pts += card.getRank() > 10 ? 10 : card.getRank() == 8 ? 50 : card.getRank();    //! Update for new modes
         }
         return pts;
     }

@@ -1,4 +1,4 @@
-package dev.lisek.crazybytes.ui.scene;
+package dev.lisek.crazybytes.ui;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -46,15 +46,15 @@ public class OnlineGame extends GamePrep {
 
     // Host constructor
     public OnlineGame() {
-        server = new Server();
-        server.start();
+        this.server = new Server();
+        this.server.start();
         super.title.setText("Online | %s:%d".formatted(server.getAddress(), server.port));
         super.play.setText("Start");
         super.back.setOnAction(eh -> {
             server.close();
             App.stage.setScene(App.menu);
         });
-        PlayerEntry host = new PlayerEntry(super.players.content, App.profile.avatar, App.profile.name);
+        PlayerEntry host = new PlayerEntry(super.players.content, App.profile.avatar(), App.profile.name());
         host.ready.setFill(Color.YELLOW);
         super.players.content.getChildren().add(host);
     }
@@ -63,7 +63,7 @@ public class OnlineGame extends GamePrep {
     public OnlineGame(String address) throws IOException{
         String ip = address.split(":")[0];
         int port = Integer.parseInt(address.split(":")[1]);
-        client = new Client(ip, port);
+        this.client = new Client(ip, port);
         super.title.setText("Online | " + address);
         super.play.setText("Ready");
         super.back.setOnAction(eh -> client.close());

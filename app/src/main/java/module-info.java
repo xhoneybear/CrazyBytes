@@ -1,8 +1,8 @@
 module JavaCards {
+    requires java.prefs;
+
     requires javafx.controls;
     requires transitive javafx.graphics;
-
-    requires com.google.gson;
 
     requires io.github.classgraph;
 

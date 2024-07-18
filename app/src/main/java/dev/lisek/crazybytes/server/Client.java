@@ -32,7 +32,6 @@ public class Client {
     public void send(String message) {
         try {
             out.println(message);
-            System.out.println("Sent hello");
             System.out.println(in.readLine());
         } catch (IOException e) {
             throw new RuntimeException(e);

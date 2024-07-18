@@ -1,75 +1,65 @@
 package dev.lisek.crazybytes.entity;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.prefs.Preferences;
 
-import dev.lisek.crazybytes.config.Config;
-import dev.lisek.crazybytes.ui.element.ProfileCard;
+public class Profile {
 
-public class Profile implements Serializable {
-    public String name;
-    public String avatar;
-    public int exp;
-    public int games;
-    public int wins;
-    public transient ProfileCard card;
+    public final Preferences prefs;
 
-    public Profile(String name, String avatar, int exp, int games, int wins) {
-        this.name = name;
-        this.avatar = avatar;
-        this.exp = exp;
-        this.games = games;
-        this.wins = wins;
+    public final ProfileCard card;
+
+    public ProfileCard editable = null;
+
+    public Profile() {
+        this(Preferences.userNodeForPackage(Profile.class));
+    }
+    public Profile(Preferences prefs) {
+        this.prefs = prefs;
+        if (null == this.prefs.get("avatar", null)) {
+            this.prefs.put("name", "guest");
+            this.prefs.put("avatar", "file:");
+            this.prefs.putInt("exp", 0);
+            this.prefs.putInt("games", 0);
+            this.prefs.putInt("wins", 0);
+        }
         this.card = new ProfileCard(this);
     }
-    public Profile() {
-        this("guest", "file:", 0, 0, 0);
+
+    public ProfileCard editableCard() {
+        if (this.editable == null) {
+            this.editable = new ProfileCard(this, true);
+        }
+        return this.editable;
     }
 
-    public static final Profile init(String data) {
-        try {
-            if (data == null) {
-                data = Files.readString(Paths.get(URI.create(Config.ACCOUNT)));
-            }
-            Profile profile = Config.gson.fromJson(data, Profile.class);
-            profile.card = new ProfileCard(profile);
-            return profile;
-        } catch (IOException e) {
-            try {
-                Profile profile = new Profile();
-                Files.writeString(Paths.get(URI.create(Config.ACCOUNT)), Config.gson.toJson(profile));
-                return profile;
-            } catch (IOException er) {
-                er.printStackTrace();
-                return null;
-            }
-        }
+    public String name() {
+        return prefs.get("name", null);
     }
-    public static final Profile init() {
-        System.out.println(Config.ACCOUNT);
-        return init(null);
+    public String avatar() {
+        return prefs.get("avatar", null);
+    }
+    public int exp() {
+        return prefs.getInt("exp", 0);
+    }
+    public int games() {
+        return prefs.getInt("games", 0);
+    }
+    public int wins() {
+        return prefs.getInt("wins", 0);
     }
 
-    public void update(String key, String value) {
-        switch (key) {
-            case "name" -> this.name = value;
-            case "avatar" -> this.avatar = value;
-            case "exp" -> this.exp += Integer.parseInt(value);
-            case "games" -> this.games++;
-            case "wins" -> this.wins++;
-            default -> System.err.println("Unknown key: " + key);
-        }
+    public void update(String key, Object value) {
         try {
-            Files.writeString(Paths.get(URI.create(Config.ACCOUNT)), Config.gson.toJson(this));
-            this.card.update(key, value);
-        } catch (IOException e) {
-            System.err.println("Error while updating profile: " + e.getMessage());
+            prefs.putInt(key, prefs.getInt(key, 0) + (int) value);
+        } catch (ClassCastException e) {
+            prefs.put(key, (String) value);
+        }
+        this.card.update(key);
+        if (this.editable != null) {
+            this.editable.update(key);
         }
     }
     public void update(String key) {
-        update(key, null);
+        update(key, 1);
     }
 }

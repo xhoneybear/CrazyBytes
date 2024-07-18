@@ -1,8 +1,7 @@
-package dev.lisek.crazybytes.ui.element;
+package dev.lisek.crazybytes.entity;
 
 import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.config.Config;
-import dev.lisek.crazybytes.entity.Profile;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -46,11 +45,11 @@ public class ProfileCard extends HBox {
     public ProfileCard(Profile profile, boolean editable) {
         this.profile = profile;
 
-        this.name = new Text(profile.name);
+        this.name = new Text(profile.name());
         this.name.setStyle("-fx-font-weight: bold; -fx-font-size: 18px;");
         this.name.setFill(Color.WHITE);
 
-        this.image = new ImageView(new Image(profile.avatar, 96, 96, true, true));
+        this.image = new ImageView(new Image(profile.avatar(), 96, 96, true, true));
         this.image.setX(12);
         this.image.setY(12);
 
@@ -61,7 +60,7 @@ public class ProfileCard extends HBox {
         Node nameBox;
 
         if (editable) {
-            TextField nameField = new TextField(profile.name);
+            TextField nameField = new TextField(profile.name());
             nameField.setMouseTransparent(true);
             nameField.setOpacity(0);
             nameField.setOnKeyPressed(eh -> {
@@ -105,13 +104,13 @@ public class ProfileCard extends HBox {
             nameBox = this.name;
         }
 
-        this.exp = new Text("" + profile.exp);
-        this.lvl = new Text(Integer.toString(profile.exp/1000));
+        this.exp = new Text("" + profile.exp());
+        this.lvl = new Text(Integer.toString(profile.exp()/1000));
         this.lvl.setStyle("-fx-font-weight: bold;");
-        this.games = new Text("" + profile.games);
-        this.wins = new Text("" + profile.wins);
+        this.games = new Text("" + profile.games());
+        this.wins = new Text("" + profile.wins());
 
-        this.expBar = new Bar(2 * (profile.exp % 1000) / 10, 10);
+        this.expBar = new Bar(2 * (profile.exp() % 1000) / 10, 10);
         Group bar = new Group(new Bar(200, 10), this.expBar);
 
         HBox xpLvl = new HBox(bar, this.lvl);
@@ -145,21 +144,17 @@ public class ProfileCard extends HBox {
         this(profile, false);
     }
 
-    public ProfileCard getEditableClone() {
-        return new ProfileCard(this.profile, true);
-    }
-
-    public void update(String key, String value) {
+    public void update(String key) {
         switch (key) {
-            case "name" -> this.name.setText(value);
-            case "avatar" -> this.image.setImage(new Image(this.profile.avatar, 96, 96, true, true));
+            case "name" -> this.name.setText(this.profile.name());
+            case "avatar" -> this.image.setImage(new Image(this.profile.avatar(), 96, 96, true, true));
             case "exp" -> {
-                this.exp.setText(Integer.toString(profile.exp));
-                this.lvl.setText(Integer.toString(profile.exp/100));
-                this.expBar.setWidth(2 * (profile.exp % 100));
+                this.exp.setText(Integer.toString(profile.exp()));
+                this.lvl.setText(Integer.toString(profile.exp()/1000));
+                this.expBar.setWidth(0.2 * (profile.exp() % 1000));
             }
-            case "games" -> this.games.setText(Integer.toString(profile.games));
-            case "wins" -> this.wins.setText(Integer.toString(profile.wins));
+            case "games" -> this.games.setText(Integer.toString(profile.games()));
+            case "wins" -> this.wins.setText(Integer.toString(profile.wins()));
             default -> System.err.println("Unknown key: " + key);
         }
     }

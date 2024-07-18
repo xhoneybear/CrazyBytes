@@ -1,10 +1,9 @@
-package dev.lisek.crazybytes.ui.element;
+package dev.lisek.crazybytes.game;
 
 import java.lang.reflect.InvocationTargetException;
 
 import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.entity.Profile;
-import dev.lisek.crazybytes.game.Game;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Background;

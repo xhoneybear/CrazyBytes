@@ -3,15 +3,11 @@ package dev.lisek.crazybytes.config;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import javafx.scene.image.Image;
 
 public class Config {
     public static final String CARDS = Config.class.getResource("/cards/").toExternalForm();
     public static final String DIR = CARDS.substring(0, CARDS.length() - 6);
-    public static final String ACCOUNT = DIR + "account.json";
     public static final Image BACK = new Image(CARDS + "back.png", 135, 210, true, true);
     public static final Image BOT = new Image(DIR + "bot.png", 48, 48, true, true);
     public static final Image HUMAN = new Image(DIR + "human.png", 48, 48, true, true);
@@ -21,7 +17,6 @@ public class Config {
     private static final String SPADES = "#AAFF66";
     private static final String CLUBS = "#66F7FF";
 
-    public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public static final java.util.Random random = new java.util.Random();
 
     private Config() {}
