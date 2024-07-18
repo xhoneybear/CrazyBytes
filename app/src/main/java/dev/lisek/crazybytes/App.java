@@ -23,8 +23,4 @@ public class App extends Application {
         stage.setScene(menu);
         stage.show();
     }
-
-    public static void main(String[] args) {
-        launch();
-    }
 }

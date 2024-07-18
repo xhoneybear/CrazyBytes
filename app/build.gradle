@@ -1,15 +1,39 @@
 plugins {
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
-    // id 'org.beryx.jlink' version '3.0.1'
 }
 
 repositories {
     mavenCentral()
 }
 
+configurations {
+    universal
+    implementation.extendsFrom(universal)
+}
+
 dependencies {
-    implementation 'io.github.classgraph:classgraph:4.8.172'
+    def jfx = 'org.openjfx:javafx'
+    def ver = '21.0.4'
+    def os = getOS()
+
+    universal "${jfx}-base:${ver}:${os}"
+    universal "${jfx}-graphics:${ver}:${os}"
+    universal "${jfx}-controls:${ver}:${os}"
+    universal "io.github.classgraph:classgraph:4.8.172"
+}
+
+private static def getOS() {
+    def os = System.getProperty('os.name').toLowerCase(Locale.ENGLISH)
+    if (os.contains('win')) {
+        return 'win'
+    }
+    if (os.contains('nix') || os.contains('nux')) {
+        return 'linux'
+    }
+    if (os.contains('osx') || os.contains('mac')) {
+        return 'mac'
+    }
+    assert false: "unknown os: $os"
 }
 
 java {
@@ -18,25 +42,17 @@ java {
     }
 }
 
-javafx {
-    version = "21.0.1"
-    modules = [ 'javafx.controls' ]
-}
-
-// jlink {
-//     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-//     launcher {
-//         name = 'JavaCards'
-//     }
-// }
-
 application {
-    mainClass = 'dev.lisek.crazybytes.App'
-    // mainModule = 'JavaCards'
+    mainClass = 'dev.lisek.crazybytes.Run'
+    mainModule = 'CrazyBytes'
 }
 
 jar {
     manifest {
-        attributes 'Main-Class': 'dev.lisek.crazybytes.App'
+        attributes 'Main-Class': 'dev.lisek.crazybytes.Run'
     }
+    from {
+        configurations.universal.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

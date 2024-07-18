@@ -1,4 +1,4 @@
-module JavaCards {
+module CrazyBytes {
     requires java.prefs;
 
     requires javafx.controls;
