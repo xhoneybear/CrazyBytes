@@ -7,6 +7,7 @@ import dev.lisek.crazybytes.entity.CardPile;
 import dev.lisek.crazybytes.entity.Player;
 import dev.lisek.crazybytes.entity.Players;
 import dev.lisek.crazybytes.ui.Animation;
+import dev.lisek.crazybytes.ui.PostGame;
 
 public class Blackjack extends Game {
 

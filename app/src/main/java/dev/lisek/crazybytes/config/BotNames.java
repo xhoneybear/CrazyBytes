@@ -23,7 +23,7 @@ public class BotNames {
         "Nancy", "Naomi", "Nate", "Natalie", "Nathan", "Neil", "Nina", "Nile", "Nox",
         "Olivia", "Oliver", "Omar", "Oscar", "Owen",
         "Patrick", "Paul", "Paula", "Peter", "Preston",
-        "Quincy", "Quinn",
+        "Quentin", "Quincy", "Quinn",
         "Ralph", "Rae", "Ray", "Raymond", "Rebecca", "Reese", "Reid", "Rhett", "Rick", "Riley", "Robert", "Robin", "Rose",
         "Sam", "Samson", "Samuel", "Sarah", "Sean", "Shane", "Shelby", "Simon", "Stella", "Steve",
         "Terry", "Thomas", "Tim", "Timothy", "Tyler",

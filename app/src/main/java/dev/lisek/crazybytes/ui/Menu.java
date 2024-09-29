@@ -2,7 +2,8 @@ package dev.lisek.crazybytes.ui;
 
 import dev.lisek.crazybytes.App;
 import dev.lisek.crazybytes.config.Config;
-import dev.lisek.crazybytes.entity.Profile;
+import dev.lisek.crazybytes.entity.LocalProfile;
+import dev.lisek.crazybytes.entity.ProfileCard;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -85,7 +86,7 @@ public class Menu extends Scene {
 
     private static final BorderPane layout = new BorderPane();
 
-    public Menu(Profile profile) {
+    public Menu(LocalProfile profile) {
         super(layout, 1600, 1000);
 
         Logo logo = new Logo();
@@ -93,10 +94,10 @@ public class Menu extends Scene {
         BorderPane top = new BorderPane();
         top.setPadding(new Insets(32));
         top.setCenter(logo);
-        HBox buff = new Profile().card;
+        HBox buff = new LocalProfile().card;
         buff.setOpacity(0);
         top.setLeft(buff);
-        top.setRight(profile.editableCard());
+        top.setRight(new ProfileCard(profile, true));
         layout.setTop(top);
 
         ImageView c1 = new ImageView(new Image(Config.CARDS + "deck.png", 280, 440, true, true));
@@ -125,7 +126,7 @@ public class Menu extends Scene {
         footer.setStyle("-fx-font-weight: bold;");
         footer.setTranslateY(-32);
         layout.setBottom(footer);
-        layout.setAlignment(footer, Pos.CENTER);
+        BorderPane.setAlignment(footer, Pos.CENTER);
 
         this.getStylesheets().add("style.css");
     }

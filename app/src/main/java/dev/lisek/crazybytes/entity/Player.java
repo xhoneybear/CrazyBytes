@@ -24,7 +24,7 @@ public class Player {
     /**
      * Player's profile.
      */
-    public final Profile profile;
+    public final ExportProfile profile;
     /**
      * Player's label.
      */
@@ -70,7 +70,7 @@ public class Player {
         }
         this.avatar.setFitHeight(24);
         this.avatar.setFitWidth(24);
-        this.profile = new Profile();
+        this.profile = new ExportProfile(this.name.getText(), this.avatar.getImage().getUrl());
         this.label = new HBox(this.avatar, this.name, this.point);
         this.label.setMouseTransparent(true);
         this.label.setAlignment(Pos.CENTER);

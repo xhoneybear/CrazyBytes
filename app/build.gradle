@@ -19,6 +19,7 @@ dependencies {
     universal "${jfx}-base:${ver}:${os}"
     universal "${jfx}-graphics:${ver}:${os}"
     universal "${jfx}-controls:${ver}:${os}"
+    universal "com.google.code.gson:gson:2.10.1"
     universal "io.github.classgraph:classgraph:4.8.172"
 }
 
@@ -44,7 +45,6 @@ java {
 
 application {
     mainClass = 'dev.lisek.crazybytes.Run'
-    mainModule = 'CrazyBytes'
 }
 
 jar {

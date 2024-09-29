@@ -54,9 +54,9 @@ class LocalPlayerEntry extends HBox {
     }
 }
 
-public class LocalGame extends GamePrep {
+public class LocalLobby extends Lobby {
 
-    public LocalGame() {
+    public LocalLobby() {
         super.title.setText("Local Game");
         super.play.setText("Play");
         ImageView addPlayer = new ImageView(new Image(Config.DIR + "icons/user-plus.png", 48, 48, true, true));
@@ -72,6 +72,7 @@ public class LocalGame extends GamePrep {
         super.back.setOnAction(eh -> App.stage.setScene(App.menu));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     void startGame(Constructor<?> constructor, List<Node> playerList) {
         Pair<String, Boolean>[] pairs = new Pair[playerList.size()];

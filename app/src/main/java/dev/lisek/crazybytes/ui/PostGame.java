@@ -1,9 +1,10 @@
-package dev.lisek.crazybytes.game;
+package dev.lisek.crazybytes.ui;
 
 import java.lang.reflect.InvocationTargetException;
 
 import dev.lisek.crazybytes.App;
-import dev.lisek.crazybytes.entity.Profile;
+import dev.lisek.crazybytes.entity.ExportProfile;
+import dev.lisek.crazybytes.game.Game;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Background;
@@ -13,7 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 public class PostGame extends StackPane {
-    public PostGame(Profile winner) {
+    public PostGame(ExportProfile winner) {
         StackPane bg = new StackPane();
         bg.setBackground(Background.fill(Color.BLACK));
         bg.setOpacity(0.5);

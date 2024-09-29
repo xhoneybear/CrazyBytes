@@ -66,6 +66,7 @@ public class ProfileCard extends HBox {
             nameField.setOnKeyPressed(eh -> {
                 if (eh.getCode() == KeyCode.ENTER) {
                     this.profile.update("name", nameField.getText());
+                    this.update("name");
                     nameField.setMouseTransparent(true);
                     nameField.setOpacity(0);
                     this.name.requestFocus();
@@ -94,7 +95,10 @@ public class ProfileCard extends HBox {
             edit.setTranslateY(12);
             edit.setOpacity(0);
             edit.setCursor(Cursor.HAND);
-            edit.setOnMouseClicked(eh -> this.profile.update("avatar", "file:" + new FileChooser().showOpenDialog(App.stage).getAbsolutePath()));
+            edit.setOnMouseClicked(eh -> {
+                this.profile.update("avatar", "file:" + new FileChooser().showOpenDialog(App.stage).getAbsolutePath());
+                this.update("avatar");
+            });
 
             this.avatar = new Group(base, this.image, edit, this.border);
             this.avatar.setOnMouseEntered(eh -> edit.setOpacity(0.5));

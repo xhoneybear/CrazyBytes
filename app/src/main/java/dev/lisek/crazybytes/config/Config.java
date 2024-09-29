@@ -6,6 +6,8 @@ import java.net.URL;
 import javafx.scene.image.Image;
 
 public class Config {
+    public static final String VERSION = "0.0.1";
+
     public static final String CARDS = Config.class.getResource("/cards/").toExternalForm();
     public static final String DIR = CARDS.substring(0, CARDS.length() - 6);
     public static final Image BACK = new Image(CARDS + "back.png", 135, 210, true, true);
